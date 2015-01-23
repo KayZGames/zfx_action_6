@@ -33,7 +33,9 @@ class Game extends GameBase {
 
         new MouseInputHandlingSystem(canvas),
         new MovementSystem(),
+        new FriendMovementSystem(),
         new CollisionDetectionSystem(),
+        new FriendCollectingSystem(),
 
         new TweeningSystem(),
 
@@ -46,6 +48,7 @@ class Game extends GameBase {
 
         new TriangleSpawningSystem(),
         new BackgroundDotSpawner(),
+        new FriendSpawner(),
         new LifetimeSystem(),
 
         new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];

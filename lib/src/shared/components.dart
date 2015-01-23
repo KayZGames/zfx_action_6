@@ -14,6 +14,10 @@ class Triangle extends Component {
 class Position extends Component {
   double x, y;
   Position(this.x, this.y);
+
+  double distanceTo(Position other) {
+    return sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
+  }
 }
 
 class Velocity extends Component {
@@ -44,3 +48,6 @@ class Lifetime extends Component {
   double value;
   Lifetime(this.value);
 }
+
+class Collectible extends Component {}
+class Friend extends Component {}

@@ -24,7 +24,7 @@ class CollisionDetectionSystem extends EntitySystem {
         var p = pm[entity];
         var t = tm[entity];
 
-        var distanceCenter = sqrt((p.x - circlePos.x) * (p.x - circlePos.x) + (p.y - circlePos.y) * (p.y - circlePos.y));
+        var distanceCenter = p.distanceTo(circlePos);
         var combinedSize = circleCircle.radius + t.size;
 
         if (distanceCenter < combinedSize) {
@@ -97,4 +97,71 @@ class LifetimeSystem extends EntityProcessingSystem {
       entity.deleteFromWorld();
     }
   }
+}
+
+class FriendCollectingSystem extends EntitySystem {
+  TagManager tm;
+  Mapper<Position> pm;
+  Mapper<Circle> cm;
+
+  FriendCollectingSystem() : super(Aspect.getAspectForAllOf([Collectible, Position, Circle]));
+
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    var player = tm.getEntity(playerTag);
+    var playerPos = pm[player];
+    var playerCircle = cm[player];
+    entities.forEach((entity) {
+      var p = pm[entity];
+      var c = cm[entity];
+
+      var distance = playerPos.distanceTo(p);
+      var combinedSize = playerCircle.radius + c.radius;
+
+      if (distance < combinedSize) {
+        entity..removeComponent(Collectible)
+              ..addComponent(new Friend())
+              ..addComponent(new Health(20.0, 20.0))
+              ..changedInWorld();
+      }
+    });
+  }
+
+  @override
+  bool checkProcessing() => tm.getEntity(playerTag) != null;
+}
+
+
+class FriendMovementSystem extends EntitySystem {
+  TagManager tm;
+  Mapper<Position> pm;
+  Mapper<Circle> cm;
+
+  FriendMovementSystem() : super(Aspect.getAspectForAllOf([Friend, Position, Circle]));
+
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    var player = tm.getEntity(playerTag);
+    var playerPos = pm[player];
+    var playerCircle = cm[player];
+
+    entities.forEach((entity) {
+      var p = pm[entity];
+      var c = cm[entity];
+
+      var distance = playerPos.distanceTo(p);
+      var neededDistance = playerCircle.radius + c.radius + 2;
+
+      var ratio = neededDistance / distance;
+
+      p.x = playerPos.x + (p.x - playerPos.x) * ratio;
+      p.y = playerPos.y + (p.y - playerPos.y) * ratio;
+      // TODO flocking
+    });
+  }
+
+
+  @override
+  bool checkProcessing() => tm.getEntity(playerTag) != null;
+
 }

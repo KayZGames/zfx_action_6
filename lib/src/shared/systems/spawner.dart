@@ -55,3 +55,27 @@ class BackgroundDotSpawner extends VoidEntitySystem {
     return false;
   }
 }
+
+class FriendSpawner extends VoidEntitySystem {
+  var spawnTimer = 0.0;
+
+  @override
+  void processSystem() {
+    world.createAndAddEntity([new Position(random.nextDouble() * 800, -20.0),
+      new Circle(5.0),
+      new Velocity(0.0, 0.0),
+      new Color('white', 'white'),
+      new Collectible()
+      ]);
+  }
+
+  @override
+  bool checkProcessing() {
+    if (spawnTimer <= 0) {
+      spawnTimer = 8000 + random.nextInt(4000);
+      return true;
+    }
+    spawnTimer -= world.delta;
+    return false;
+  }
+}
