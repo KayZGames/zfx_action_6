@@ -56,3 +56,25 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
         ..closePath();
   }
 }
+
+class HealthRenderingSystem extends EntityProcessingSystem {
+  Mapper<Position> pm;
+  Mapper<Health> hm;
+  Mapper<Circle> cm;
+
+  CanvasRenderingContext2D ctx;
+
+  HealthRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Health, Position, Circle]));
+
+  @override
+  void processEntity(Entity entity) {
+    var h = hm[entity];
+    var p = pm[entity];
+    var c = cm[entity];
+
+    ctx..fillStyle = 'green'
+       ..strokeStyle = 'blue'
+       ..fillRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius * h.value / 100, c.radius * 0.2)
+       ..strokeRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius, c.radius * 0.2);
+  }
+}

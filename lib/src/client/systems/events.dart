@@ -21,10 +21,11 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
   @override
   void processSystem() {
     var e = tm.getEntity(playerTag);
+    if (null != e) {
+      var p = pm[e];
 
-    var p = pm[e];
-
-    p.x = offset.x.toDouble();
-    p.y = offset.y.toDouble();
+      p.x = offset.x.toDouble();
+      p.y = offset.y.toDouble();
+    }
   }
 }

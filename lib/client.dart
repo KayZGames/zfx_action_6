@@ -15,29 +15,45 @@ class Game extends GameBase {
 
   void createEntities() {
     TagManager tm = world.getManager(TagManager);
-    var e = addEntity([new Circle(20.0), new Position(400.0, 300.0), new Color('#ffffff', '#ffffff')]);
-    tm.register(e, playerTag);
+    GroupManager gm = world.getManager(GroupManager);
 
-    addEntity([new Triangle(20.0, 0.0), new Position(500.0, 300.0), new Color('#ffffff')]);
-    addEntity([new Triangle(20.0, PI / 2), new Position(400.0, 200.0), new Color('#ffffff')]);
-    addEntity([new Triangle(20.0, PI), new Position(300.0, 300.0), new Color('#ffffff')]);
+    var e = addEntity(
+        [
+            new Circle(20.0),
+            new Position(400.0, 300.0),
+            new Color('#ffffff', '#ffffff'),
+            new Health(100.0, 100.0)]);
+    tm.register(e, playerTag);
+    gm.add(e, circleGroup);
+
+    addEntity(
+        [new Triangle(20.0, 0.0), new Position(500.0, 300.0), new Color('#ffffff')]);
+    addEntity(
+        [new Triangle(20.0, PI / 2), new Position(400.0, 200.0), new Color('#ffffff')]);
+    addEntity(
+        [new Triangle(20.0, PI), new Position(300.0, 300.0), new Color('#ffffff')]);
   }
 
   List<EntitySystem> getSystems() {
     return [
-            new MouseInputHandlingSystem(canvas),
+        new CircleDestructionSystem(),
 
-            new TweeningSystem(),
-            new CanvasCleaningSystem(canvas, fillStyle: 'black'),
-            new TriangleRenderingSystem(ctx),
-            new CircleRenderingSystem(ctx),
+        new MouseInputHandlingSystem(canvas),
+        new CollisionDetectionSystem(),
 
-            new FpsRenderingSystem(ctx),
-            new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')
-    ];
+        new TweeningSystem(),
+
+        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
+        new TriangleRenderingSystem(ctx),
+        new CircleRenderingSystem(ctx),
+        new HealthRenderingSystem(ctx),
+        new FpsRenderingSystem(ctx),
+
+        new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];
   }
 
   onInit() {
     world.addManager(new TagManager());
+    world.addManager(new GroupManager());
   }
 }

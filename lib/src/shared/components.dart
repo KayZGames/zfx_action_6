@@ -21,3 +21,11 @@ class Color extends Component {
   String fillStyle;
   Color(this.strokeStyle, [this.fillStyle = 'black']);
 }
+
+class Health extends Component {
+  double value;
+  double maxHealth;
+  Health(this.value, this.maxHealth);
+}
+
+class CircleDestruction extends Component {}

@@ -8,3 +8,4 @@ part 'src/shared/components.dart';
 part 'src/shared/systems/logic.dart';
 
 const String playerTag = 'player';
+const String circleGroup = 'circles';
