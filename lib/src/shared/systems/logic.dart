@@ -65,5 +65,35 @@ class CircleDestructionSystem extends EntityProcessingSystem {
     }
     processed = false;
   }
+}
 
+class MovementSystem extends EntityProcessingSystem {
+  Mapper<Position> pm;
+  Mapper<Velocity> vm;
+
+  MovementSystem() : super(Aspect.getAspectForAllOf([Position, Velocity]));
+
+  @override
+  void processEntity(Entity entity) {
+    var p = pm[entity];
+    var v = vm[entity];
+
+    p.x += v.x * world.delta;
+    p.y += v.y * world.delta;
+  }
+}
+
+class LifetimeSystem extends EntityProcessingSystem {
+  Mapper<Lifetime> lm;
+
+  LifetimeSystem() : super(Aspect.getAspectForAllOf([Lifetime]));
+
+  @override
+  void processEntity(Entity entity) {
+    var l = lm[entity];
+    l.value -= world.delta;
+    if (l.value <= 0.0) {
+      entity.deleteFromWorld();
+    }
+  }
 }

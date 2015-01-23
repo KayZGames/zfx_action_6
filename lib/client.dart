@@ -39,6 +39,7 @@ class Game extends GameBase {
         new CircleDestructionSystem(),
 
         new MouseInputHandlingSystem(canvas),
+        new MovementSystem(),
         new CollisionDetectionSystem(),
 
         new TweeningSystem(),
@@ -48,6 +49,9 @@ class Game extends GameBase {
         new CircleRenderingSystem(ctx),
         new HealthRenderingSystem(ctx),
         new FpsRenderingSystem(ctx),
+
+        new TriangleSpawningSystem(),
+        new LifetimeSystem(),
 
         new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];
   }

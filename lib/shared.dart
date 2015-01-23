@@ -6,6 +6,7 @@ part 'src/shared/components.dart';
 
 //part 'src/shared/systems/name.dart';
 part 'src/shared/systems/logic.dart';
+part 'src/shared/systems/spawner.dart';
 
 const String playerTag = 'player';
 const String circleGroup = 'circles';

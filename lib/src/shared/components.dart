@@ -16,6 +16,11 @@ class Position extends Component {
   Position(this.x, this.y);
 }
 
+class Velocity extends Component {
+  double x, y;
+  Velocity(this.x, this.y);
+}
+
 class Color extends Component {
   String strokeStyle;
   String fillStyle;
@@ -29,3 +34,8 @@ class Health extends Component {
 }
 
 class CircleDestruction extends Component {}
+
+class Lifetime extends Component {
+  double value;
+  Lifetime(this.value);
+}
