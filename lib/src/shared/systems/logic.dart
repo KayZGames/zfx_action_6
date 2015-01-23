@@ -145,6 +145,10 @@ class FriendMovementSystem extends EntitySystem {
     var playerPos = pm[player];
     var playerCircle = cm[player];
 
+    var amount = entities.length;
+
+    var count = 0;
+    var angleDiff = 0.02;
     entities.forEach((entity) {
       var p = pm[entity];
       var c = cm[entity];
@@ -154,12 +158,16 @@ class FriendMovementSystem extends EntitySystem {
 
       var ratio = neededDistance / distance;
 
-      p.x = playerPos.x + (p.x - playerPos.x) * ratio;
-      p.y = playerPos.y + (p.y - playerPos.y) * ratio;
-      // TODO flocking
+      var diffX = p.x - playerPos.x;
+      var diffY = p.y - playerPos.y;
+      var angle = atan2(diffY, diffX) + (count - amount/2) * angleDiff;
+
+      p.x = playerPos.x + cos(angle) * neededDistance;
+      p.y = playerPos.y + sin(angle) * neededDistance;
+
+      count++;
     });
   }
-
 
   @override
   bool checkProcessing() => tm.getEntity(playerTag) != null;
