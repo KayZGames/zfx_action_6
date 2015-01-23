@@ -25,13 +25,6 @@ class Game extends GameBase {
             new Health(100.0, 100.0)]);
     tm.register(e, playerTag);
     gm.add(e, circleGroup);
-
-    addEntity(
-        [new Triangle(20.0, 0.0), new Position(500.0, 300.0), new Color('#ffffff')]);
-    addEntity(
-        [new Triangle(20.0, PI / 2), new Position(400.0, 200.0), new Color('#ffffff')]);
-    addEntity(
-        [new Triangle(20.0, PI), new Position(300.0, 300.0), new Color('#ffffff')]);
   }
 
   List<EntitySystem> getSystems() {
@@ -45,12 +38,14 @@ class Game extends GameBase {
         new TweeningSystem(),
 
         new CanvasCleaningSystem(canvas, fillStyle: 'black'),
+        new BackgroundDotRenderingSystem(ctx),
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
         new HealthRenderingSystem(ctx),
         new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),
+        new BackgroundDotSpawner(),
         new LifetimeSystem(),
 
         new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];

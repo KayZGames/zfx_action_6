@@ -78,3 +78,22 @@ class HealthRenderingSystem extends EntityProcessingSystem {
        ..strokeRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius, c.radius * 0.2);
   }
 }
+
+class BackgroundDotRenderingSystem extends EntityProcessingSystem {
+  Mapper<Position> pm;
+  Mapper<Color> cm;
+  Mapper<Background> bm;
+
+  CanvasRenderingContext2D ctx;
+  BackgroundDotRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Background, Position, Color]));
+
+  @override
+  void processEntity(Entity entity) {
+    var p = pm[entity];
+    var c = cm[entity];
+    var b = bm[entity];
+
+    ctx..fillStyle = c.fillStyle
+       ..fillRect(p.x, p.y, b.size, b.size);
+  }
+}

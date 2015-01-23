@@ -70,6 +70,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
 class MovementSystem extends EntityProcessingSystem {
   Mapper<Position> pm;
   Mapper<Velocity> vm;
+  static const double pretendMovementY = 0.1;
 
   MovementSystem() : super(Aspect.getAspectForAllOf([Position, Velocity]));
 
@@ -79,7 +80,7 @@ class MovementSystem extends EntityProcessingSystem {
     var v = vm[entity];
 
     p.x += v.x * world.delta;
-    p.y += v.y * world.delta;
+    p.y += (v.y + pretendMovementY) * world.delta;
   }
 }
 

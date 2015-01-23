@@ -35,6 +35,11 @@ class Health extends Component {
 
 class CircleDestruction extends Component {}
 
+class Background extends Component {
+  int size;
+  Background(this.size);
+}
+
 class Lifetime extends Component {
   double value;
   Lifetime(this.value);
