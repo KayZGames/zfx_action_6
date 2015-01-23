@@ -1,6 +1,6 @@
 library shared;
 
-import 'package:gamedev_helpers/gamedev_helpers_shared.dart';
+import 'package:gamedev_helpers/gamedev_helpers_shared.dart' hide Triangle;
 
 part 'src/shared/components.dart';
 
