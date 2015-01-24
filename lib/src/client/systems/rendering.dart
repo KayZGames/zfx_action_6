@@ -40,10 +40,11 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
   Mapper<Position> pm;
   Mapper<Triangle> tm;
   Mapper<Color> cm;
+  Mapper<Orientation> om;
 
   CanvasRenderingContext2D ctx;
 
-  TriangleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Position, Triangle, Color]));
+  TriangleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Position, Triangle, Color, Orientation]));
 
 
   @override
@@ -51,17 +52,18 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
     var p = pm[entity];
     var t = tm[entity];
     var c = cm[entity];
+    var o = om[entity];
 
-    var o = t.orientation;
+    var angle = o.value;
 
     ctx
         ..beginPath()
         ..fillStyle = c.fillStyle
         ..strokeStyle = c.strokeStyle
-        ..moveTo(p.x + cos(o) * t.size, p.y + sin(o) * t.size)
-        ..lineTo(p.x + cos(o + PI * 2 / 3) * t.size, p.y + sin(o + PI * 2 / 3) * t.size)
-        ..lineTo(p.x + cos(o + PI * 4 / 3) * t.size, p.y + sin(o + PI * 4 / 3) * t.size)
-        ..lineTo(p.x + cos(o) * t.size, p.y + sin(o) * t.size)
+        ..moveTo(p.x + cos(angle) * t.size, p.y + sin(angle) * t.size)
+        ..lineTo(p.x + cos(angle + PI * 2 / 3) * t.size, p.y + sin(angle + PI * 2 / 3) * t.size)
+        ..lineTo(p.x + cos(angle + PI * 4 / 3) * t.size, p.y + sin(angle + PI * 4 / 3) * t.size)
+        ..lineTo(p.x + cos(angle) * t.size, p.y + sin(angle) * t.size)
         ..stroke()
         ..closePath();
   }

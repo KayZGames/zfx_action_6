@@ -7,8 +7,7 @@ class Circle extends Component {
 
 class Triangle extends Component {
   double size;
-  double orientation;
-  Triangle(this.size, this.orientation);
+  Triangle(this.size);
 }
 
 class Position extends Component {
@@ -25,10 +24,54 @@ class Velocity extends Component {
   Velocity(this.x, this.y);
 }
 
+class Acceleration extends Component implements Tweenable {
+  static const VALUE = 1;
+  double value;
+  Acceleration([this.value = 0.0]);
+
+  @override
+  int getTweenableValues(Tween tween, int tweenType, List<num> returnValues) {
+    if (tweenType == VALUE) {
+      returnValues[0] = value;
+      return 1;
+    }
+    return 0;
+  }
+
+  @override
+  void setTweenableValues(Tween tween, int tweenType, List<num> newValues) {
+    if (tweenType == VALUE) {
+      value = newValues[0];
+    }
+  }
+}
+
+class Orientation extends Component implements Tweenable {
+  static const VALUE = 1;
+  double value;
+  Orientation(this.value);
+
+  @override
+  int getTweenableValues(Tween tween, int tweenType, List<num> returnValues) {
+    if (tweenType == 1) {
+      returnValues[0] = value;
+      return 1;
+    }
+    return 0;
+  }
+
+  @override
+  void setTweenableValues(Tween tween, int tweenType, List<num> newValues) {
+    if (tweenType == VALUE) {
+      value = newValues[0];
+    }
+  }
+}
+
 class Color extends Component {
   String strokeStyle;
   String fillStyle;
-  Color({this.strokeStyle : 'black', this.fillStyle : 'black'});
+  Color({this.strokeStyle: 'black', this.fillStyle: 'black'});
 }
 
 class Health extends Component {

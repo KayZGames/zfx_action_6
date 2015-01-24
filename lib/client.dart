@@ -11,7 +11,9 @@ part 'src/client/systems/rendering.dart';
 
 class Game extends GameBase {
 
-  Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600);
+  Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600) {
+    Tween.waypointsLimit = 1;
+  }
 
   void createEntities() {
     TagManager tm = world.getManager(TagManager);
@@ -33,6 +35,7 @@ class Game extends GameBase {
         new CircleDestructionSystem(),
 
         new MouseInputHandlingSystem(canvas),
+        new AcccelerationSystem(),
         new MovementSystem(),
         new FriendMovementSystem(),
         new CollisionDetectionSystem(),

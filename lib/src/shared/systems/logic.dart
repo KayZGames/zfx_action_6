@@ -122,6 +122,24 @@ class MovementSystem extends EntityProcessingSystem {
   }
 }
 
+class AcccelerationSystem extends EntityProcessingSystem {
+  Mapper<Velocity> vm;
+  Mapper<Acceleration> am;
+  Mapper<Orientation> om;
+
+  AcccelerationSystem() : super(Aspect.getAspectForAllOf([Velocity, Acceleration, Orientation]));
+
+  @override
+  void processEntity(Entity entity) {
+    var a = am[entity];
+    var v = vm[entity];
+    var o = om[entity];
+
+    v.x += a.value * cos(o.value) * world.delta;
+    v.y += a.value * sin(o.value) * world.delta;
+  }
+}
+
 class LifetimeSystem extends EntityProcessingSystem {
   Mapper<Lifetime> lm;
 
