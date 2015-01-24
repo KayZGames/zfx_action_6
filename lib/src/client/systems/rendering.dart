@@ -41,11 +41,17 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
   Mapper<Triangle> tm;
   Mapper<Color> cm;
   Mapper<Orientation> om;
+  double beatMod = 1.0;
 
   CanvasRenderingContext2D ctx;
 
   TriangleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Position, Triangle, Color, Orientation]));
 
+  @override
+  void begin() {
+    var mod = sin(world.time / 140.0);
+    beatMod = 1 + (mod * mod * mod * mod) / 2;
+  }
 
   @override
   void processEntity(Entity entity) {
@@ -56,14 +62,15 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
 
     var angle = o.value;
 
+    var size = t.size * beatMod;
     ctx
         ..beginPath()
         ..fillStyle = c.fillStyle
         ..strokeStyle = c.strokeStyle
-        ..moveTo(p.x + cos(angle) * t.size, p.y + sin(angle) * t.size)
-        ..lineTo(p.x + cos(angle + PI * 2 / 3) * t.size, p.y + sin(angle + PI * 2 / 3) * t.size)
-        ..lineTo(p.x + cos(angle + PI * 4 / 3) * t.size, p.y + sin(angle + PI * 4 / 3) * t.size)
-        ..lineTo(p.x + cos(angle) * t.size, p.y + sin(angle) * t.size)
+        ..moveTo(p.x + cos(angle) * size, p.y + sin(angle) * size)
+        ..lineTo(p.x + cos(angle + PI * 2 / 3) * size, p.y + sin(angle + PI * 2 / 3) * size)
+        ..lineTo(p.x + cos(angle + PI * 4 / 3) * size, p.y + sin(angle + PI * 4 / 3) * size)
+        ..lineTo(p.x + cos(angle) * size, p.y + sin(angle) * size)
         ..stroke()
         ..closePath();
   }
