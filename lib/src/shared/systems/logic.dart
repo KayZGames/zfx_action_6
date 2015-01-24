@@ -44,10 +44,18 @@ class CollisionDetectionSystem extends EntitySystem {
 }
 
 class CircleDestructionSystem extends EntityProcessingSystem {
+  GroupManager gm;
   Mapper<Position> pm;
   Mapper<Circle> cm;
 
   var processed = false;
+  var messages = [
+      'Noooo!!!!',
+      'You monster!!!',
+      'You killed Kenny!!',
+      'Bastard!',
+      'He was my best friend :\'((',
+      'Whhhyyyy?!?'];
 
   CircleDestructionSystem() : super(Aspect.getAspectForAllOf([Position, Circle, CircleDestruction]));
 
@@ -60,6 +68,17 @@ class CircleDestructionSystem extends EntityProcessingSystem {
   @override
   void end() {
     if (processed) {
+      var entities = gm.getEntities(circleGroup);
+      entities.forEach((entity) {
+        var m = new Message(messages[random.nextInt(messages.length)]);
+        new Tween.to(m, Message.OPACITY, 2500.0)
+            ..targetValues = [0.0]
+            ..easing = TweenEquations.easeInOutCubic
+            ..start(tweenManager);
+        entity
+            ..addComponent(m)
+            ..changedInWorld();
+      });
       world.processEntityChanges();
     }
     processed = false;
