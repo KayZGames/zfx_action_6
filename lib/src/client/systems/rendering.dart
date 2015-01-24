@@ -5,10 +5,11 @@ class CircleRenderingSystem extends EntityProcessingSystem {
   Mapper<Position> pm;
   Mapper<Circle> circleMapper;
   Mapper<Color> colorMapper;
+  Mapper<Heartbeat> hbMapper;
 
   CanvasRenderingContext2D ctx;
 
-  CircleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Position, Circle, Color]));
+  CircleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Position, Circle, Color, Heartbeat]));
 
 
   @override
@@ -16,12 +17,20 @@ class CircleRenderingSystem extends EntityProcessingSystem {
     var position = pm[entity];
     var circle = circleMapper[entity];
     var color = colorMapper[entity];
+    var hb = hbMapper[entity];
+
+    var beat = 60000 / hb.frequency;
+    var heartbeatMod = world.time % beat;
+    var radius = circle.radius;
+    if (heartbeatMod > 0.8 * beat) {
+      radius = radius + (1000 * heartbeatMod/beat - 800) * 0.01;
+    }
 
     ctx
         ..beginPath()
         ..fillStyle = color.fillStyle
         ..strokeStyle = color.strokeStyle
-        ..arc(position.x, position.y, circle.radius, 0, 2 * PI)
+        ..arc(position.x, position.y, radius, 0, 2 * PI)
         ..fill()
         ..closePath();
   }

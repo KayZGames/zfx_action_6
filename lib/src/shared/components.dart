@@ -37,6 +37,11 @@ class Health extends Component {
   Health(this.value, this.maxHealth);
 }
 
+class Heartbeat extends Component {
+  double frequency;
+  Heartbeat([this.frequency = 60.0]);
+}
+
 class CircleDestruction extends Component {}
 
 class Background extends Component {

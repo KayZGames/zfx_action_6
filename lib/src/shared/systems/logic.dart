@@ -8,6 +8,7 @@ class CollisionDetectionSystem extends EntitySystem {
   Mapper<Triangle> tm;
   Mapper<Circle> cm;
   Mapper<Health> hm;
+  Mapper<Heartbeat> hbm;
 
   CollisionDetectionSystem() : super(Aspect.getAspectForAllOf([Position, Triangle]));
 
@@ -29,7 +30,11 @@ class CollisionDetectionSystem extends EntitySystem {
 
           // TODO: do some fancy triangle vs circle collision detection, for now: collide!
           var h = hm[circle];
+          var hb = hbm[circle];
+
           h.value -= 1;
+          hb.frequency = 60 + (1 - h.value/h.maxHealth) * 140;
+
           if (h.value <= 0.0) {
             circle.addComponent(new CircleDestruction());
             circle.changedInWorld();

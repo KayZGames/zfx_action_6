@@ -22,6 +22,7 @@ class Game extends GameBase {
             new Circle(20.0),
             new Position(400.0, 300.0),
             new Color(fillStyle: '#ffffff'),
+            new Heartbeat(),
             new Health(100.0, 100.0)]);
     tm.register(e, playerTag);
     gm.add(e, circleGroup);

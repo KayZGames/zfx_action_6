@@ -67,6 +67,7 @@ class FriendSpawner extends VoidEntitySystem {
       new Color(fillStyle: 'white'),
       new Collectible(),
       new AttentionWhore(1000.0),
+      new Heartbeat()
       ]);
   }
 
