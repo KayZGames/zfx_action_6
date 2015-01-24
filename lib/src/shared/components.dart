@@ -51,3 +51,31 @@ class Lifetime extends Component {
 
 class Collectible extends Component {}
 class Friend extends Component {}
+
+class AttentionWhore extends Component {
+  double delay;
+  AttentionWhore(this.delay);
+}
+
+class Message extends Component implements Tweenable {
+  static const int OPACITY = 1;
+  String message;
+  double opacity;
+  Message(this.message, [this.opacity = 1.0]);
+
+  @override
+  int getTweenableValues(Tween tween, int tweenType, List<num> returnValues) {
+    if (tweenType == OPACITY) {
+      returnValues[0] = opacity;
+      return 1;
+    }
+    return 0;
+  }
+
+  @override
+  void setTweenableValues(Tween tween, int tweenType, List<num> newValues) {
+    if (tweenType == OPACITY) {
+      opacity = newValues[0];
+    }
+  }
+}

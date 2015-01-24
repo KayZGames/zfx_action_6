@@ -17,12 +17,13 @@ class CircleRenderingSystem extends EntityProcessingSystem {
     var circle = circleMapper[entity];
     var color = colorMapper[entity];
 
-    ctx..beginPath()
-       ..fillStyle = color.fillStyle
-       ..strokeStyle = color.strokeStyle
-       ..arc(position.x, position.y, circle.radius, 0, 2 * PI)
-       ..fill()
-       ..closePath();
+    ctx
+        ..beginPath()
+        ..fillStyle = color.fillStyle
+        ..strokeStyle = color.strokeStyle
+        ..arc(position.x, position.y, circle.radius, 0, 2 * PI)
+        ..fill()
+        ..closePath();
   }
 }
 
@@ -44,12 +45,13 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
 
     var o = t.orientation;
 
-    ctx..beginPath()
+    ctx
+        ..beginPath()
         ..fillStyle = c.fillStyle
         ..strokeStyle = c.strokeStyle
         ..moveTo(p.x + cos(o) * t.size, p.y + sin(o) * t.size)
-        ..lineTo(p.x + cos(o + PI * 2/3) * t.size, p.y + sin(o + PI * 2/3) * t.size)
-        ..lineTo(p.x + cos(o + PI * 4/3) * t.size, p.y + sin(o + PI * 4/3) * t.size)
+        ..lineTo(p.x + cos(o + PI * 2 / 3) * t.size, p.y + sin(o + PI * 2 / 3) * t.size)
+        ..lineTo(p.x + cos(o + PI * 4 / 3) * t.size, p.y + sin(o + PI * 4 / 3) * t.size)
         ..lineTo(p.x + cos(o) * t.size, p.y + sin(o) * t.size)
         ..stroke()
         ..closePath();
@@ -71,10 +73,11 @@ class HealthRenderingSystem extends EntityProcessingSystem {
     var p = pm[entity];
     var c = cm[entity];
 
-    ctx..fillStyle = 'green'
-       ..strokeStyle = 'blue'
-       ..fillRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius * h.value / 100, c.radius * 0.2)
-       ..strokeRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius, c.radius * 0.2);
+    ctx
+        ..fillStyle = 'green'
+        ..strokeStyle = 'blue'
+        ..fillRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius * h.value / 100, c.radius * 0.2)
+        ..strokeRect(p.x - c.radius / 2, p.y - c.radius * 1.3, c.radius, c.radius * 0.2);
   }
 }
 
@@ -92,7 +95,46 @@ class BackgroundDotRenderingSystem extends EntityProcessingSystem {
     var c = cm[entity];
     var b = bm[entity];
 
-    ctx..fillStyle = c.fillStyle
-       ..fillRect(p.x, p.y, b.size, b.size);
+    ctx
+        ..fillStyle = c.fillStyle
+        ..fillRect(p.x, p.y, b.size, b.size);
+  }
+}
+
+class MessageRenderingSystem extends EntityProcessingSystem {
+  Mapper<Message> mm;
+  Mapper<Position> pm;
+
+  CanvasRenderingContext2D ctx;
+
+  MessageRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Message, Position]));
+
+  @override
+  void processEntity(Entity entity) {
+    var p = pm[entity];
+    var m = mm[entity];
+
+    var width = ctx.measureText(m.message).width;
+
+    ctx
+        ..fillStyle = 'white'
+        ..globalAlpha = m.opacity
+        ..fillText(m.message, p.x - width / 2, p.y - 20);
+
+    if (m.opacity == 0.0) {
+      entity
+          ..removeComponent(Message)
+          ..changedInWorld();
+    }
+  }
+
+  @override
+  void begin() {
+    ctx.save();
+  }
+
+  @override
+  void end() {
+    ctx.restore();
   }
 }

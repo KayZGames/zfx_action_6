@@ -11,8 +11,6 @@ class CollisionDetectionSystem extends EntitySystem {
 
   CollisionDetectionSystem() : super(Aspect.getAspectForAllOf([Position, Triangle]));
 
-
-
   @override
   void processEntities(Iterable<Entity> entities) {
     var circles = groupManager.getEntities(circleGroup);
@@ -28,6 +26,7 @@ class CollisionDetectionSystem extends EntitySystem {
         var combinedSize = circleCircle.radius + t.size;
 
         if (distanceCenter < combinedSize) {
+
           // TODO: do some fancy triangle vs circle collision detection, for now: collide!
           var h = hm[circle];
           h.value -= 1;
@@ -105,6 +104,8 @@ class FriendCollectingSystem extends EntitySystem {
   Mapper<Position> pm;
   Mapper<Circle> cm;
 
+  var messages = ['Yay!', 'Thank you!!', 'Hey buddy!!', 'I\'m soo happy!', 'Oh joy!'];
+
   FriendCollectingSystem() : super(Aspect.getAspectForAllOf([Collectible, Position, Circle]));
 
   @override
@@ -121,13 +122,25 @@ class FriendCollectingSystem extends EntitySystem {
 
       if (distance < combinedSize) {
         gm.add(entity, circleGroup);
-
-        entity..removeComponent(Collectible)
-              ..addComponent(new Friend())
-              ..addComponent(new Health(20.0, 20.0))
-              ..changedInWorld();
+        var m = new Message(messages[random.nextInt(messages.length)]);
+        new Tween.to(m, Message.OPACITY, 2500.0)
+            ..targetValues = [0.0]
+            ..easing = TweenEquations.easeInOutCubic
+            ..start(tweenManager);
+        entity
+            ..removeComponent(Collectible)
+            ..removeComponent(AttentionWhore)
+            ..addComponent(new Friend())
+            ..addComponent(new Health(20.0, 20.0))
+            ..addComponent(m)
+            ..changedInWorld();
       }
     });
+  }
+
+  @override
+  void end() {
+    world.processEntityChanges();
   }
 
   @override
@@ -163,7 +176,7 @@ class FriendMovementSystem extends EntitySystem {
 
       var diffX = p.x - playerPos.x;
       var diffY = p.y - playerPos.y;
-      var angle = atan2(diffY, diffX) + (count - amount/2) * angleDiff;
+      var angle = atan2(diffY, diffX) + (count - amount / 2) * angleDiff;
 
       p.x = playerPos.x + cos(angle) * neededDistance;
       p.y = playerPos.y + sin(angle) * neededDistance;
@@ -190,9 +203,42 @@ class HealthColoringSystem extends EntityProcessingSystem {
 
     var ratio = h.value / h.maxHealth;
 
-    var red = ((1-ratio * ratio) * 100).toInt();
+    var red = ((1 - ratio * ratio) * 100).toInt();
     var green = (ratio * ratio * 255).toInt();
 
     c.fillStyle = '#${red.toRadixString(16).padLeft(2, '0')}${green.toRadixString(16).padLeft(2, '0')}00';
+  }
+}
+
+class AttentionDelayDecreasingSystem extends EntityProcessingSystem {
+  Mapper<AttentionWhore> am;
+  var messages = [
+      'Hello?',
+      'I\'m so lonely...',
+      'Help!!',
+      'Please save me...',
+      'I wanna be your friend.',
+      'Greetings stranger!',
+      'Is anybody out there?'];
+
+  AttentionDelayDecreasingSystem() : super(Aspect.getAspectForAllOf([AttentionWhore]));
+
+  @override
+  void processEntity(Entity entity) {
+    var a = am[entity];
+    a.delay -= world.delta;
+    if (a.delay <= 0.0) {
+      var m = new Message(messages[random.nextInt(messages.length)]);
+      new Tween.to(m, Message.OPACITY, 2500.0)
+          ..targetValues = [0.0]
+          ..easing = TweenEquations.easeInOutCubic
+          ..start(tweenManager);
+
+      entity
+          ..removeComponent(AttentionWhore)
+          ..addComponent(m)
+          ..changedInWorld();
+
+    }
   }
 }

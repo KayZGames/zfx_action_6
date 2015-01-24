@@ -45,12 +45,14 @@ class Game extends GameBase {
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
         new HealthRenderingSystem(ctx),
+        new MessageRenderingSystem(ctx),
         new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),
         new BackgroundDotSpawner(),
         new FriendSpawner(),
         new LifetimeSystem(),
+        new AttentionDelayDecreasingSystem(),
 
         new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];
   }
