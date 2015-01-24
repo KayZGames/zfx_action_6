@@ -33,7 +33,7 @@ class CollisionDetectionSystem extends EntitySystem {
           var hb = hbm[circle];
 
           h.value -= 1;
-          hb.frequency = 60 + (1 - h.value/h.maxHealth) * 140;
+          hb.frequency = 60 + (1 - h.value / h.maxHealth) * 140;
 
           if (h.value <= 0.0) {
             circle.addComponent(new CircleDestruction());
@@ -72,14 +72,18 @@ class CircleDestructionSystem extends EntityProcessingSystem {
     for (int i = 0; i < PI * c.radius * c.radius; i++) {
       var distanceToCenter = c.radius * random.nextDouble();
       var angleToCenter = 2 * PI * random.nextDouble();
-      world.createAndAddEntity([new Particle(),
-        new Color(fillStyle: 'white'),
-        new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
-        new Velocity(cos(angleToCenter) * distanceToCenter / c.radius, sin(angleToCenter) * distanceToCenter / c.radius),
-        new Lifetime(100.0 + random.nextDouble() * 500.0)
-      ]);
-    }
+      var lifetime = 500.0 + random.nextInt(1000);
+      var particle = new Particle();
+      easeParticle(particle, lifetime);
 
+      world.createAndAddEntity(
+          [
+              particle,
+              new Color(fillStyle: randomBrightColor()),
+              new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
+              new Velocity(cos(angleToCenter) * distanceToCenter / c.radius / 2, sin(angleToCenter) * distanceToCenter / c.radius / 2),
+              new Lifetime(lifetime)]);
+    }
 
     entity.deleteFromWorld();
     processed = true;
@@ -91,7 +95,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       var entities = gm.getEntities(circleGroup);
       entities.forEach((entity) {
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Message.OPACITY, 2500.0)
+        new Tween.to(m, Alpha.ALPHA, 2500.0)
             ..targetValues = [0.0]
             ..easing = TweenEquations.easeInOutCubic
             ..start(tweenManager);
@@ -140,6 +144,40 @@ class AcccelerationSystem extends EntityProcessingSystem {
   }
 }
 
+class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
+  Mapper<Acceleration> am;
+  Mapper<Orientation> om;
+  Mapper<Position> pm;
+  Mapper<Thruster> tm;
+
+  ThrusterParticleEmittingSystem() : super(Aspect.getAspectForAllOf([Acceleration, Orientation, Position, Thruster]));
+
+  @override
+  void processEntity(Entity entity) {
+    var a = am[entity];
+    var o = om[entity];
+    var p = pm[entity];
+    var t = tm[entity];
+
+    for (int i = 0; i < (a.value * 1000 + 1) * 2.5; i++) {
+      var lifetime = 500.0 + random.nextInt(100);
+      var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
+      var particle = new Particle();
+      easeParticle(particle, lifetime);
+
+      world.createAndAddEntity(
+          [
+              particle,
+              new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance),
+              new Velocity(-cos(emitAngle) * 0.2 * random.nextDouble(), -sin(emitAngle) * 0.2 * random.nextDouble()),
+              new Color(
+                  fillStyle:
+                      '#${(200 + random.nextInt(50)).toInt().toRadixString(16)}${(50 + random.nextInt(200)).toInt().toRadixString(16)}00'),
+              new Lifetime(lifetime)]);
+    }
+  }
+}
+
 class LifetimeSystem extends EntityProcessingSystem {
   Mapper<Lifetime> lm;
 
@@ -180,7 +218,7 @@ class FriendCollectingSystem extends EntitySystem {
       if (distance < combinedSize) {
         gm.add(entity, circleGroup);
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Message.OPACITY, 2500.0)
+        new Tween.to(m, Alpha.ALPHA, 2500.0)
             ..targetValues = [0.0]
             ..easing = TweenEquations.easeInOutCubic
             ..start(tweenManager);
@@ -286,7 +324,7 @@ class AttentionDelayDecreasingSystem extends EntityProcessingSystem {
     a.delay -= world.delta;
     if (a.delay <= 0.0) {
       var m = new Message(messages[random.nextInt(messages.length)]);
-      new Tween.to(m, Message.OPACITY, 2500.0)
+      new Tween.to(m, Alpha.ALPHA, 2500.0)
           ..targetValues = [0.0]
           ..easing = TweenEquations.easeInOutCubic
           ..start(tweenManager);

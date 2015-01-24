@@ -10,6 +10,11 @@ class Triangle extends Component {
   Triangle(this.size);
 }
 
+class Thruster extends Component {
+  double coreDistance;
+  Thruster(this.coreDistance);
+}
+
 class Position extends Component {
   double x, y;
   Position(this.x, this.y);
@@ -105,16 +110,21 @@ class AttentionWhore extends Component {
   AttentionWhore(this.delay);
 }
 
-class Message extends Component implements Tweenable {
-  static const int OPACITY = 1;
+class Message extends Component with Alpha implements Tweenable {
   String message;
-  double opacity;
-  Message(this.message, [this.opacity = 1.0]);
+  Message(this.message);
+}
+
+class Particle extends Component with Alpha implements Tweenable {}
+
+class Alpha implements Tweenable {
+  static const int ALPHA = 1;
+  double alpha = 1.0;
 
   @override
   int getTweenableValues(Tween tween, int tweenType, List<num> returnValues) {
-    if (tweenType == OPACITY) {
-      returnValues[0] = opacity;
+    if (tweenType == ALPHA) {
+      returnValues[0] = 1.0;
       return 1;
     }
     return 0;
@@ -122,10 +132,9 @@ class Message extends Component implements Tweenable {
 
   @override
   void setTweenableValues(Tween tween, int tweenType, List<num> newValues) {
-    if (tweenType == OPACITY) {
-      opacity = newValues[0];
+    if (tweenType == ALPHA) {
+      alpha = newValues[0];
     }
   }
-}
 
-class Particle extends Component {}
+}

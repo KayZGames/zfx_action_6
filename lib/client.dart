@@ -36,6 +36,7 @@ class Game extends GameBase {
 
         new MouseInputHandlingSystem(canvas),
         new AcccelerationSystem(),
+        new ThrusterParticleEmittingSystem(),
         new MovementSystem(),
         new FriendMovementSystem(),
         new CollisionDetectionSystem(),

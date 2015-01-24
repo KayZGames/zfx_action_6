@@ -22,13 +22,16 @@ class TriangleSpawningSystem extends VoidEntitySystem {
   void spawnCenterOriented() {
     var orientation = random.nextDouble() * 2 * PI;
     var velocity = 0.5 + random.nextDouble() * 0.5;
+    var size = 10.0 + random.nextDouble() * 15.0;
     world.createAndAddEntity(
         [
-            new Triangle(10.0 + random.nextDouble() * 15.0),
+            new Triangle(size),
             new Position(400 + cos(orientation - PI) * 500.0, 300 + sin(orientation - PI) * 400.0),
             new Orientation(orientation),
             new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
             new Lifetime(1000 / (1 - velocity)),
+            new Thruster(size * sin(PI / 4)),
+            new Acceleration(),
             new Color(strokeStyle: '#ffffff')]);
   }
 
@@ -36,7 +39,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var velocity = 0.2 + random.nextDouble() * 0.2;
     var verticalPosBase = random.nextDouble() * 450.0;
     var size = 10.0 + random.nextDouble() * 15.0;
-    var distance = 1.75 * size + random.nextDouble() * size;
+    var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 0.002 * random.nextDouble();
 
     for (int i = 0; i < random.nextInt(6); i++) {
@@ -55,6 +58,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
               new Lifetime(10000.0),
+              new Thruster(size * sin(PI / 4)),
               acceleration,
               new Color(strokeStyle: '#ffffff')]);
     }
@@ -63,7 +67,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var velocity = 0.2 + random.nextDouble() * 0.2;
     var horizontalPosBase = random.nextDouble() * 800.0;
     var size = 10.0 + random.nextDouble() * 15.0;
-    var distance = 1.75 * size + random.nextDouble() * size;
+    var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 0.002 * random.nextDouble();
 
     for (int i = 0; i < random.nextInt(6); i++) {
@@ -82,6 +86,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
               new Lifetime(10000.0),
+              new Thruster(size * sin(PI / 4)),
               acceleration,
               new Color(strokeStyle: '#ffffff')]);
     }
@@ -108,12 +113,10 @@ class BackgroundDotSpawner extends VoidEntitySystem {
         [
             new Position(random.nextDouble() * 800.0, 0.0),
             new Velocity(0.0, random.nextDouble() * 0.025),
-            new Color(fillStyle: '#${randomBrightColor()}${randomBrightColor()}${randomBrightColor()}'),
+            new Color(fillStyle: randomBrightColor()),
             new Background(1 + random.nextInt(3)),
             new Lifetime(10000.0)]);
   }
-
-  String randomBrightColor() => (150 + random.nextInt(105)).toInt().toRadixString(16);
 
   @override
   bool checkProcessing() {

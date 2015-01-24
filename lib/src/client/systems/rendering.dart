@@ -129,10 +129,10 @@ class MessageRenderingSystem extends EntityProcessingSystem {
 
     ctx
         ..fillStyle = 'white'
-        ..globalAlpha = m.opacity
+        ..globalAlpha = m.alpha
         ..fillText(m.message, p.x - width / 2, p.y - 20);
 
-    if (m.opacity == 0.0) {
+    if (m.alpha == 0.0) {
       entity
           ..removeComponent(Message)
           ..changedInWorld();
@@ -153,6 +153,7 @@ class MessageRenderingSystem extends EntityProcessingSystem {
 class ParticleRenderingSystem extends EntityProcessingSystem {
   Mapper<Color> cm;
   Mapper<Position> pm;
+  Mapper<Particle> particleMapper;
 
   CanvasRenderingContext2D ctx;
 
@@ -162,9 +163,21 @@ class ParticleRenderingSystem extends EntityProcessingSystem {
   void processEntity(Entity entity) {
     var p = pm[entity];
     var c = cm[entity];
+    var particle = particleMapper[entity];
 
     ctx
         ..fillStyle = c.fillStyle
+        ..globalAlpha = particle.alpha
         ..fillRect(p.x, p.y, 1, 1);
+  }
+
+  @override
+  void begin() {
+    ctx.save();
+  }
+
+  @override
+  void end() {
+    ctx.restore();
   }
 }
