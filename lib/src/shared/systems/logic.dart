@@ -101,6 +101,7 @@ class LifetimeSystem extends EntityProcessingSystem {
 
 class FriendCollectingSystem extends EntitySystem {
   TagManager tm;
+  GroupManager gm;
   Mapper<Position> pm;
   Mapper<Circle> cm;
 
@@ -119,6 +120,8 @@ class FriendCollectingSystem extends EntitySystem {
       var combinedSize = playerCircle.radius + c.radius;
 
       if (distance < combinedSize) {
+        gm.add(entity, circleGroup);
+
         entity..removeComponent(Collectible)
               ..addComponent(new Friend())
               ..addComponent(new Health(20.0, 20.0))
@@ -172,4 +175,24 @@ class FriendMovementSystem extends EntitySystem {
   @override
   bool checkProcessing() => tm.getEntity(playerTag) != null;
 
+}
+
+class HealthColoringSystem extends EntityProcessingSystem {
+  Mapper<Health> hm;
+  Mapper<Color> cm;
+
+  HealthColoringSystem() : super(Aspect.getAspectForAllOf([Color, Health]));
+
+  @override
+  void processEntity(Entity entity) {
+    var h = hm[entity];
+    var c = cm[entity];
+
+    var ratio = h.value / h.maxHealth;
+
+    var red = ((1-ratio * ratio) * 100).toInt();
+    var green = (ratio * ratio * 255).toInt();
+
+    c.fillStyle = '#${red.toRadixString(16).padLeft(2, '0')}${green.toRadixString(16).padLeft(2, '0')}00';
+  }
 }

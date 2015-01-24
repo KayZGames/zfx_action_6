@@ -21,7 +21,6 @@ class CircleRenderingSystem extends EntityProcessingSystem {
        ..fillStyle = color.fillStyle
        ..strokeStyle = color.strokeStyle
        ..arc(position.x, position.y, circle.radius, 0, 2 * PI)
-       ..stroke()
        ..fill()
        ..closePath();
   }

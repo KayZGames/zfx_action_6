@@ -35,6 +35,7 @@ class Game extends GameBase {
         new MovementSystem(),
         new FriendMovementSystem(),
         new CollisionDetectionSystem(),
+        new HealthColoringSystem(),
         new FriendCollectingSystem(),
 
         new TweeningSystem(),
