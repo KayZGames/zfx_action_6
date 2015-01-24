@@ -28,7 +28,7 @@ class Velocity extends Component {
 class Color extends Component {
   String strokeStyle;
   String fillStyle;
-  Color(this.strokeStyle, [this.fillStyle = 'black']);
+  Color({this.strokeStyle : 'black', this.fillStyle : 'black'});
 }
 
 class Health extends Component {
@@ -79,3 +79,5 @@ class Message extends Component implements Tweenable {
     }
   }
 }
+
+class Particle extends Component {}

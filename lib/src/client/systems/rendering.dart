@@ -138,3 +138,22 @@ class MessageRenderingSystem extends EntityProcessingSystem {
     ctx.restore();
   }
 }
+
+class ParticleRenderingSystem extends EntityProcessingSystem {
+  Mapper<Color> cm;
+  Mapper<Position> pm;
+
+  CanvasRenderingContext2D ctx;
+
+  ParticleRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Particle, Color, Position]));
+
+  @override
+  void processEntity(Entity entity) {
+    var p = pm[entity];
+    var c = cm[entity];
+
+    ctx
+        ..fillStyle = c.fillStyle
+        ..fillRect(p.x, p.y, 1, 1);
+  }
+}

@@ -61,6 +61,21 @@ class CircleDestructionSystem extends EntityProcessingSystem {
 
   @override
   void processEntity(Entity entity) {
+    var c = cm[entity];
+    var p = pm[entity];
+
+    for (int i = 0; i < PI * c.radius * c.radius; i++) {
+      var distanceToCenter = c.radius * random.nextDouble();
+      var angleToCenter = 2 * PI * random.nextDouble();
+      world.createAndAddEntity([new Particle(),
+        new Color(fillStyle: 'white'),
+        new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
+        new Velocity(cos(angleToCenter) * distanceToCenter / c.radius, sin(angleToCenter) * distanceToCenter / c.radius),
+        new Lifetime(100.0 + random.nextDouble() * 500.0)
+      ]);
+    }
+
+
     entity.deleteFromWorld();
     processed = true;
   }

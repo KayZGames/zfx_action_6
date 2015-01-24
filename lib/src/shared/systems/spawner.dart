@@ -16,7 +16,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
                 300 + sin(orientation - PI) * 400.0),
             new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
             new Lifetime(1000 / (1 - velocity)),
-            new Color('#ffffff')]);
+            new Color(strokeStyle: '#ffffff')]);
   }
 
   @override
@@ -38,7 +38,7 @@ class BackgroundDotSpawner extends VoidEntitySystem {
   void processSystem() {
     world.createAndAddEntity([new Position(random.nextDouble() * 800.0, 0.0),
       new Velocity(0.0, 0.0),
-      new Color('white', '#${randomBrightColor()}${randomBrightColor()}${randomBrightColor()}'),
+      new Color(fillStyle: '#${randomBrightColor()}${randomBrightColor()}${randomBrightColor()}'),
       new Background(1 + random.nextInt(3)),
       new Lifetime(10000.0)]);
   }
@@ -64,7 +64,7 @@ class FriendSpawner extends VoidEntitySystem {
     world.createAndAddEntity([new Position(random.nextDouble() * 800, -20.0),
       new Circle(5.0),
       new Velocity(0.0, 0.0),
-      new Color('white', 'white'),
+      new Color(fillStyle: 'white'),
       new Collectible(),
       new AttentionWhore(1000.0),
       ]);

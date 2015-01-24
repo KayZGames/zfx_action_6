@@ -21,7 +21,7 @@ class Game extends GameBase {
         [
             new Circle(20.0),
             new Position(400.0, 300.0),
-            new Color('#ffffff', '#ffffff'),
+            new Color(fillStyle: '#ffffff'),
             new Health(100.0, 100.0)]);
     tm.register(e, playerTag);
     gm.add(e, circleGroup);
@@ -42,6 +42,7 @@ class Game extends GameBase {
 
         new CanvasCleaningSystem(canvas, fillStyle: 'black'),
         new BackgroundDotRenderingSystem(ctx),
+        new ParticleRenderingSystem(ctx),
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
         new HealthRenderingSystem(ctx),
