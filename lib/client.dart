@@ -39,7 +39,8 @@ class Game extends GameBase {
         new ThrusterParticleEmittingSystem(),
         new MovementSystem(),
         new FriendMovementSystem(),
-        new CollisionDetectionSystem(),
+        new CircleTriangleCollisionDetectionSystem(),
+        new CircleCollisionSystem(),
         new HealthColoringSystem(),
         new FriendCollectingSystem(),
 

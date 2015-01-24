@@ -137,6 +137,7 @@ class FriendSpawner extends VoidEntitySystem {
     world.createAndAddEntity(
         [
             new Position(100 + random.nextDouble() * 600, -20.0),
+            new Orientation(0.0),
             new Circle(5.0),
             new Velocity(0.0, 0.0),
             new Color(fillStyle: 'white'),

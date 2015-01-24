@@ -1,7 +1,7 @@
 part of shared;
 
 
-class CollisionDetectionSystem extends EntitySystem {
+class CircleTriangleCollisionDetectionSystem extends EntitySystem {
   GroupManager groupManager;
 
   Mapper<Position> pm;
@@ -10,7 +10,7 @@ class CollisionDetectionSystem extends EntitySystem {
   Mapper<Health> hm;
   Mapper<Heartbeat> hbm;
 
-  CollisionDetectionSystem() : super(Aspect.getAspectForAllOf([Position, Triangle]));
+  CircleTriangleCollisionDetectionSystem() : super(Aspect.getAspectForAllOf([Position, Triangle]));
 
   @override
   void processEntities(Iterable<Entity> entities) {
@@ -42,6 +42,76 @@ class CollisionDetectionSystem extends EntitySystem {
         }
       });
     });
+  }
+
+  @override
+  bool checkProcessing() => true;
+}
+
+class CircleCollisionSystem extends EntitySystem {
+  TagManager tm;
+  Mapper<Position> pm;
+  Mapper<Circle> cm;
+  Mapper<Velocity> vm;
+
+  CircleCollisionSystem() : super(Aspect.getAspectForAllOf([Circle, Friend, Position, Velocity]));
+
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    var player = tm.getEntity(playerTag);
+    var entitiesAsList = entities.toList();
+    for (int i = 0; i < entitiesAsList.length - 1; i++) {
+      var p1 = pm[entitiesAsList[i]];
+      var c1 = cm[entitiesAsList[i]];
+      for (int j = i; j < entitiesAsList.length; j++) {
+        var p2 = pm[entitiesAsList[j]];
+        var c2 = cm[entitiesAsList[j]];
+        if (c1.radius + c2.radius > p1.distanceTo(p2)) {
+          var v1 = vm[entitiesAsList[i]];
+          var v2 = vm[entitiesAsList[j]];
+
+          var dx = p2.x - p1.x;
+          var dy = p2.y - p1.y;
+          // collision angle
+          num phi = atan2(dy, dx);
+          num v1i = v1.length;
+          num v2i = v2.length;
+          num ang1 = atan2(v1.y, v1.x);
+          num ang2 = atan2(v2.y, v2.x);
+
+          // transforming velocities in a coordinate system where both circles
+          // have an equal y-coordinate thus allowing 1D elastic collision calculations
+          num v1xr = v1i * cos(ang1 - phi);
+          num v1yr = v1i * sin(ang1 - phi);
+          num v2xr = v2i * cos(ang2 - phi);
+          num v2yr = v2i * sin(ang2 - phi);
+          // calculate momentums
+          num mTotal = 2;
+          // elastic collision
+          num v1fxr = (v1xr + 2 * v2xr - v1xr) / mTotal;
+          num v2fxr = (v2xr + 2 * v1xr - v2xr) / mTotal;
+          num v1fyr = v1yr;
+          num v2fyr = v2yr;
+          // transform back to original coordinate system
+          v1.x = cos(phi) * v1fxr + cos(phi + PI / 2) * v1fyr * 0.8;
+          v1.y = sin(phi) * v1fxr + sin(phi + PI / 2) * v1fyr * 0.8;
+          v2.x = cos(phi) * v2fxr + cos(phi + PI / 2) * v2fyr * 0.8;
+          v2.y = sin(phi) * v2fxr + sin(phi + PI / 2) * v2fyr * 0.8;
+        }
+      }
+    }
+    var p2 = pm[player];
+    var c2 = cm[player];
+    for (int i = 0; i < entitiesAsList.length; i++) {
+      var p1 = pm[entitiesAsList[i]];
+      var c1 = cm[entitiesAsList[i]];
+      var minDistance = c1.radius + c2.radius;
+      if (minDistance > p1.distanceTo(p2)) {
+        var v1 = vm[entitiesAsList[i]];
+        v1.x = -v1.x * 0.8;
+        v1.y = -v1.y * 0.8;
+      }
+    }
   }
 
   @override
@@ -81,7 +151,9 @@ class CircleDestructionSystem extends EntityProcessingSystem {
               particle,
               new Color(fillStyle: randomBrightColor()),
               new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
-              new Velocity(cos(angleToCenter) * distanceToCenter / c.radius / 2, sin(angleToCenter) * distanceToCenter / c.radius / 2),
+              new Velocity(
+                  cos(angleToCenter) * distanceToCenter / c.radius / 2,
+                  sin(angleToCenter) * distanceToCenter / c.radius / 2),
               new Lifetime(lifetime)]);
     }
 
@@ -159,7 +231,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
     var p = pm[entity];
     var t = tm[entity];
 
-    for (int i = 0; i < (a.value * 1000 + 1) * 2.5; i++) {
+    for (int i = 0; i < random.nextInt(10); i++) {
       var lifetime = 500.0 + random.nextInt(100);
       var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
       var particle = new Particle();
@@ -228,6 +300,8 @@ class FriendCollectingSystem extends EntitySystem {
             ..addComponent(new Friend())
             ..addComponent(new Health(20.0, 20.0))
             ..addComponent(m)
+            ..addComponent(new Acceleration())
+            ..addComponent(new Thruster(c.radius))
             ..changedInWorld();
       }
     });
@@ -247,8 +321,12 @@ class FriendMovementSystem extends EntitySystem {
   TagManager tm;
   Mapper<Position> pm;
   Mapper<Circle> cm;
+  Mapper<Acceleration> am;
+  Mapper<Orientation> om;
+  Mapper<Velocity> vm;
 
-  FriendMovementSystem() : super(Aspect.getAspectForAllOf([Friend, Position, Circle]));
+  FriendMovementSystem()
+      : super(Aspect.getAspectForAllOf([Friend, Position, Circle, Acceleration, Orientation, Velocity]));
 
   @override
   void processEntities(Iterable<Entity> entities) {
@@ -256,27 +334,30 @@ class FriendMovementSystem extends EntitySystem {
     var playerPos = pm[player];
     var playerCircle = cm[player];
 
-    var amount = entities.length;
-
-    var count = 0;
-    var angleDiff = 0.02;
     entities.forEach((entity) {
       var p = pm[entity];
       var c = cm[entity];
+      var a = am[entity];
+      var o = om[entity];
+      var v = vm[entity];
 
       var distance = playerPos.distanceTo(p);
       var neededDistance = playerCircle.radius + c.radius + 2;
 
-      var ratio = neededDistance / distance;
+      var missingDistance = distance - neededDistance;
 
-      var diffX = p.x - playerPos.x;
-      var diffY = p.y - playerPos.y;
-      var angle = atan2(diffY, diffX) + (count - amount / 2) * angleDiff;
+      var diffX = playerPos.x - p.x;
+      var diffY = playerPos.y - p.y;
+      var angle = atan2(diffY, diffX);
+      var velocityAngle = atan2(v.y, v.x);
+      var velocity = sqrt(v.x * v.x + v.y * v.y);
 
-      p.x = playerPos.x + cos(angle) * neededDistance;
-      p.y = playerPos.y + sin(angle) * neededDistance;
-
-      count++;
+      if (missingDistance <= 0) {
+        a.value = 0.0;
+      } else {
+        a.value = 0.001;
+        o.value = angle;
+      }
     });
   }
 

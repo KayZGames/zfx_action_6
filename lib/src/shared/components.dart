@@ -27,6 +27,8 @@ class Position extends Component {
 class Velocity extends Component {
   double x, y;
   Velocity(this.x, this.y);
+
+  double get length => sqrt(x * x + y * y);
 }
 
 class Acceleration extends Component implements Tweenable {
