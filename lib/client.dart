@@ -66,7 +66,7 @@ class Game extends GameBase {
         new MessageRenderingSystem(ctx),
         new GameStateRenderingSystem(ctx),
         new GameOverRenderingSystem(ctx),
-        new FpsRenderingSystem(ctx),
+//        new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),
         new BackgroundDotSpawner(),
@@ -91,7 +91,10 @@ class Game extends GameBase {
       audioAnalyser = audioCtx.createAnalyser();
       audioAnalyser.fftSize = fftSize;
       audioCtx.createMediaStreamSource(mediaStream).connectNode(audioAnalyser);
-    }).catchError((error) {});
+      eventBus.fire(new AnalyticsTrackEvent('audio', 'yes'), sync: false);
+    }).catchError((error) {
+      eventBus.fire(new AnalyticsTrackEvent('audio', 'no'), sync: false);
+    });
   }
 
   onInitDone() {

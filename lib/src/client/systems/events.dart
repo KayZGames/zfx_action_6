@@ -22,6 +22,7 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
         if (gameState.painometer >= 100.0) {
           gameState.painometer = 100.0;
           gameState.rageMode = true;
+          eventBus.fire(new AnalyticsTrackEvent('Rage Mode', ''), sync: false);
         } else if (tm.getEntity(playerTag) == null) {
           world.deleteAllEntities();
           var e = world.createAndAddEntity(
@@ -35,6 +36,7 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
           gm.add(e, circleGroup);
           gameState = new GameState();
           hss.updateHighscore();
+          eventBus.fire(new AnalyticsTrackEvent('Restart Game', ''), sync: false);
         }
       }
     });
