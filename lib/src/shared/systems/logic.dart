@@ -34,6 +34,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
 
           h.value -= 1;
           hb.frequency = 60 + (1 - h.value / h.maxHealth) * 140;
+          gameState.painometer += 0.1;
 
           if (h.value <= 0.0) {
             circle.addComponent(new CircleDestruction());
@@ -161,6 +162,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
 
     gameState.friendsKilled += 1;
     gameState.friendsAlive -= 1;
+    gameState.painometer += 1;
     entity.deleteFromWorld();
     processed = true;
   }

@@ -23,6 +23,7 @@ class GameState {
   int friendsKilled = 0;
   double inPain = 0.0;
   double notInPain = 0.0;
+  num painometer = 0;
 }
 
 void easeParticle(Particle particle, double lifetime) {

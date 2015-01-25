@@ -214,6 +214,20 @@ class GameStateRenderingSystem extends VoidEntitySystem {
     printState('Score', nf.format(score), scoreWidth, 20);
     printState('Friends', nf.format(gameState.friendsAlive), scoreWidth, 40);
     printState('Killed Friends', nf.format(gameState.friendsKilled), scoreWidth, 60);
+
+    var gradient = ctx.createLinearGradient(0, 0, 600, 1);
+    gradient
+        ..addColorStop(0, 'green')
+        ..addColorStop(1, 'red');
+    var painometer = min(600, 600 * gameState.painometer / 100);
+    if (gameState.painometer >= 100.0) {
+      ctx.lineWidth = 1 + (1 + sin(world.time / 100)) / 2;
+    }
+    ctx
+        ..fillStyle = gradient
+        ..strokeStyle = 'cyan'
+        ..fillRect(100, 570, painometer, 20)
+        ..strokeRect(100, 570, 600, 20);
   }
 
   void printState(String label, String text, int scoreWidth, int y) {

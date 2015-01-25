@@ -19,7 +19,12 @@ class PainAnalysingSystem extends VoidEntitySystem {
         byteFrequencyData[22] < byteFrequencyData[33] &&
         byteFrequencyData[55] > 40) {
       gameState.notInPain = 0.0;
+      var before = gameState.inPain ~/ 100.0;
       gameState.inPain += world.delta;
+      var after = gameState.inPain ~/ 100.0;
+      if (before < after) {
+        gameState.painometer += 0.2;
+      }
     } else {
       gameState.notInPain += world.delta;
     }
@@ -44,5 +49,5 @@ class PainAnalysingSystem extends VoidEntitySystem {
   }
 
   @override
-  bool checkProcessing() => node != null;
+  bool checkProcessing() => node != null && tm.getEntity(playerTag) != null;
 }
