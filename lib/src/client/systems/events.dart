@@ -15,6 +15,12 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
     canvas.onMouseMove.listen((event) {
       offset = event.offset;
     });
+    canvas.onMouseDown.listen((event) {
+      if (event.button == 0 && gameState.painometer >= 100.0) {
+        gameState.painometer = 100.0;
+        gameState.rageMode = true;
+      }
+    });
   }
 
 

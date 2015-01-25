@@ -21,9 +21,16 @@ class GameState {
   double score = 0.0;
   int friendsAlive = 0;
   int friendsKilled = 0;
+  int trianglesKilled = 0;
   double inPain = 0.0;
   double notInPain = 0.0;
-  num painometer = 0;
+  num painometer = 0.0;
+  bool rageMode = false;
+
+  double get rageMod {
+    var mod = 1 - gameState.painometer / 100;
+    return (1 - mod * mod * mod * mod);
+  }
 }
 
 void easeParticle(Particle particle, double lifetime) {

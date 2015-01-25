@@ -20,19 +20,20 @@ class TriangleSpawningSystem extends VoidEntitySystem {
   }
 
   void spawnCenterOriented() {
-    var orientation = random.nextDouble() * 2 * PI;
+    var orientation = random.nextDouble() * PI;
     var velocity = 0.5 + random.nextDouble() * 0.5;
     var size = 10.0 + random.nextDouble() * 15.0;
+    var strokeStyle = generateTriangleColor();
     world.createAndAddEntity(
         [
             new Triangle(size),
             new Position(400 + cos(orientation - PI) * 500.0, 300 + sin(orientation - PI) * 400.0),
             new Orientation(orientation),
             new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
-            new Lifetime(1000 / (1 - velocity)),
+            new Lifetime(4000.0),
             new Thruster(size * sin(PI / 4)),
             new Acceleration(),
-            new Color(strokeStyle: '#ffffff')]);
+            new Color(strokeStyle: strokeStyle)]);
   }
 
   void spawnHorizontalMovement() {
@@ -41,6 +42,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var size = 10.0 + random.nextDouble() * 15.0;
     var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 0.002 * random.nextDouble();
+    var strokeStyle = generateTriangleColor();
 
     for (int i = 0; i < random.nextInt(6); i++) {
       var orientation = random.nextInt(2) * PI;
@@ -57,10 +59,10 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Position(400 + cos(orientation - PI) * 500.0, verticalPosBase + distance * i),
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
-              new Lifetime(10000.0),
+              new Lifetime(4000.0),
               new Thruster(size * sin(PI / 4)),
               acceleration,
-              new Color(strokeStyle: '#ffffff')]);
+              new Color(strokeStyle: strokeStyle)]);
     }
   }
   void spawnVerticalMovement() {
@@ -69,9 +71,10 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var size = 10.0 + random.nextDouble() * 15.0;
     var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 0.002 * random.nextDouble();
+    var strokeStyle = generateTriangleColor();
 
     for (int i = 0; i < random.nextInt(6); i++) {
-      var orientation = random.nextInt(2) * PI + PI / 2;
+      var orientation = PI / 2;
       var acceleration = new Acceleration();
 
       new Tween.to(acceleration, Acceleration.VALUE, 5000)
@@ -85,17 +88,19 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Position(horizontalPosBase + distance * i, 300 + sin(orientation - PI) * 400.0),
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
-              new Lifetime(10000.0),
+              new Lifetime(4000.0),
               new Thruster(size * sin(PI / 4)),
               acceleration,
-              new Color(strokeStyle: '#ffffff')]);
+              new Color(strokeStyle: strokeStyle)]);
     }
   }
+
+  String generateTriangleColor() => '#00${randomBrightColorFragment()}${randomBrightColorFragment()}';
 
   @override
   bool checkProcessing() {
     if (spawnTimer <= 0) {
-      spawnTimer = 1000.0;
+      spawnTimer = 1000.0 / max(1, gameState.friendsAlive / (gameState.rageMode ? 0.5 : 2));
       return true;
     }
     spawnTimer -= world.delta;
@@ -109,10 +114,16 @@ class BackgroundDotSpawner extends VoidEntitySystem {
 
   @override
   void processSystem() {
+    var minSpeed = 0.0;
+    var speedMod = 0.025;
+    if (gameState.rageMode) {
+      minSpeed = 0.2 * gameState.rageMod;
+      speedMod = 0.2 * gameState.rageMod;
+    }
     world.createAndAddEntity(
         [
             new Position(random.nextDouble() * 800.0, 0.0),
-            new Velocity(0.0, random.nextDouble() * 0.025),
+            new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
             new Color(fillStyle: randomBrightColor()),
             new Background(1 + random.nextInt(3)),
             new Lifetime(10000.0)]);

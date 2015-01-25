@@ -10,35 +10,70 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
   Mapper<Health> hm;
   Mapper<Heartbeat> hbm;
 
+  var messages = ['HAHA!!', 'PWND!', 'MASSACRE!!!', 'KILL THEM ALL!', 'WE RULE!'];
+
   CircleTriangleCollisionDetectionSystem() : super(Aspect.getAspectForAllOf([Position, Triangle]));
 
   @override
-  void processEntities(Iterable<Entity> entities) {
+  void processEntities(Iterable<Entity> triangles) {
     var circles = groupManager.getEntities(circleGroup);
     circles.forEach((circle) {
       var circlePos = pm[circle];
       var circleCircle = cm[circle];
 
-      entities.forEach((entity) {
-        var p = pm[entity];
-        var t = tm[entity];
+      triangles.forEach((triangle) {
+        var p = pm[triangle];
+        var t = tm[triangle];
 
         var distanceCenter = p.distanceTo(circlePos);
         var combinedSize = circleCircle.radius + t.size;
 
         if (distanceCenter < combinedSize) {
+          if (gameState.rageMode) {
+            triangle.deleteFromWorld();
+            gameState.painometer -= 0.5;
+            gameState.score += 10.0;
+            gameState.trianglesKilled += 1;
+            var m = new Message(messages[random.nextInt(messages.length)]);
+            new Tween.to(m, Alpha.ALPHA, 2500.0)
+                ..targetValues = [0.0]
+                ..easing = TweenEquations.easeInOutCubic
+                ..start(tweenManager);
+            circle
+                ..addComponent(m)
+                ..changedInWorld();
 
-          // TODO: do some fancy triangle vs circle collision detection, for now: collide!
-          var h = hm[circle];
-          var hb = hbm[circle];
+            for (int i = 0; i < t.size * t.size / 2; i++) {
+              var distanceToCenter = t.size* random.nextDouble();
+              var angleToCenter = 2 * PI * random.nextDouble();
+              var lifetime = 500.0 + random.nextInt(1000);
+              var particle = new Particle();
+              easeParticle(particle, lifetime);
 
-          h.value -= 1;
-          hb.frequency = 60 + (1 - h.value / h.maxHealth) * 140;
-          gameState.painometer += 0.1;
+              world.createAndAddEntity(
+                  [
+                      particle,
+                      new Color(fillStyle: '#00${randomBrightColorFragment()}${randomBrightColorFragment()}'),
+                      new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
+                      new Velocity(
+                          cos(angleToCenter) * distanceToCenter / t.size / 2,
+                          sin(angleToCenter) * distanceToCenter / t.size / 2),
+                      new Lifetime(lifetime)]);
+            }
 
-          if (h.value <= 0.0) {
-            circle.addComponent(new CircleDestruction());
-            circle.changedInWorld();
+          } else {
+            // TODO: do some fancy triangle vs circle collision detection, for now: collide!
+            var h = hm[circle];
+            var hb = hbm[circle];
+
+            h.value -= 1;
+            hb.frequency = 60 + (1 - h.value / h.maxHealth) * 140;
+            gameState.painometer += 0.1;
+
+            if (h.value <= 0.0) {
+              circle.addComponent(new CircleDestruction());
+              circle.changedInWorld();
+            }
           }
         }
       });
@@ -129,9 +164,10 @@ class CircleDestructionSystem extends EntityProcessingSystem {
   var processed = false;
   var messages = [
       'Noooo!!!!',
-      'You monster!!!',
-      'You killed Kenny!!',
-      'Bastard!',
+      'Those monsters!!!',
+      'They killed Kenny!!',
+      'Those bastards!',
+      'I\'ll get my revenge!',
       'He was my best friend :\'((',
       'Whhhyyyy?!?'];
 
@@ -152,7 +188,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       world.createAndAddEntity(
           [
               particle,
-              new Color(fillStyle: randomBrightColor()),
+              new Color(fillStyle: '#${randomBrightColorFragment()}0000'),
               new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
               new Velocity(
                   cos(angleToCenter) * distanceToCenter / c.radius / 2,
@@ -162,7 +198,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
 
     gameState.friendsKilled += 1;
     gameState.friendsAlive -= 1;
-    gameState.painometer += 1;
+    gameState.painometer += 5;
     entity.deleteFromWorld();
     processed = true;
   }
@@ -173,9 +209,9 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       var entities = gm.getEntities(circleGroup);
       entities.forEach((entity) {
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Alpha.ALPHA, 2500.0)
+        new Tween.to(m, Alpha.ALPHA, 4000.0)
             ..targetValues = [0.0]
-            ..easing = TweenEquations.easeInOutCubic
+            ..easing = TweenEquations.easeOutCubic
             ..start(tweenManager);
         entity
             ..addComponent(m)
@@ -237,7 +273,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
     var p = pm[entity];
     var t = tm[entity];
 
-    for (int i = 0; i < random.nextInt(10); i++) {
+    for (int i = 0; i < random.nextInt(5); i++) {
       var lifetime = 500.0 + random.nextInt(100);
       var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
       var particle = new Particle();
@@ -298,7 +334,7 @@ class FriendCollectingSystem extends EntitySystem {
         var m = new Message(messages[random.nextInt(messages.length)]);
         new Tween.to(m, Alpha.ALPHA, 2500.0)
             ..targetValues = [0.0]
-            ..easing = TweenEquations.easeInOutCubic
+            ..easing = TweenEquations.easeInCubic
             ..start(tweenManager);
         entity
             ..removeComponent(Collectible)
@@ -363,7 +399,11 @@ class FriendMovementSystem extends EntitySystem {
       if (missingDistance <= 25) {
         a.value = 0.0;
       } else {
-        a.value = sqrt(missingDistance) / 100000;
+        if (gameState.rageMode) {
+          a.value = sqrt(missingDistance) / 10000;
+        } else {
+          a.value = sqrt(missingDistance) / 100000;
+        }
         o.value = angle;
       }
     });
@@ -425,4 +465,23 @@ class AttentionDelayDecreasingSystem extends EntityProcessingSystem {
 
     }
   }
+}
+
+class CalmDownSystem extends VoidEntitySystem {
+  TagManager tm;
+  Mapper<Health> hm;
+
+  @override
+  void processSystem() {
+    gameState.painometer -= 0.02;
+    if (gameState.painometer <= 0.0) {
+      gameState.rageMode = false;
+      var player = tm.getEntity(playerTag);
+      var h = hm[player];
+      h.value = h.maxHealth;
+    }
+  }
+
+  @override
+  bool checkProcessing() => gameState.rageMode;
 }

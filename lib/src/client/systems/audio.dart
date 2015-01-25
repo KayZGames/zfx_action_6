@@ -14,7 +14,8 @@ class PainAnalysingSystem extends VoidEntitySystem {
     node.getByteFrequencyData(byteFrequencyData);
 
     var player = tm.getEntity(playerTag);
-    if (byteFrequencyData[100] < 10 &&
+    if (!gameState.rageMode &&
+        byteFrequencyData[100] < 10 &&
         byteFrequencyData[5] > 100 &&
         byteFrequencyData[22] < byteFrequencyData[33] &&
         byteFrequencyData[55] > 40) {
@@ -23,19 +24,19 @@ class PainAnalysingSystem extends VoidEntitySystem {
       gameState.inPain += world.delta;
       var after = gameState.inPain ~/ 100.0;
       if (before < after) {
-        gameState.painometer += 0.2;
+        gameState.painometer += 0.3;
       }
     } else {
       gameState.notInPain += world.delta;
     }
-    if (gameState.notInPain > 500.0) {
+    if (gameState.notInPain > 300.0) {
       gameState.inPain = 0.0;
     }
     Message m;
     if (mm.has(player)) {
       var painMod = gameState.inPain ~/ 100;
       m = mm[player];
-      m.message = 'AH!'.split('').map((char) => char * (painMod ~/ 2)).join('');
+      m.message = 'AH!'.split('').map((char) => char * (painMod ~/ 4)).join('');
       m.fontSize = 14 + painMod * 2;
     } else {
       m = new Message('AH!', fontSize: 14);
@@ -44,8 +45,11 @@ class PainAnalysingSystem extends VoidEntitySystem {
           ..changedInWorld();
       world.processEntityChanges();
     }
-    var notInPainMod = gameState.notInPain / 500;
-    m.alpha = max(0.0, 1.0 - notInPainMod * notInPainMod * notInPainMod);
+    // hacky hack hack
+    if (m.message.startsWith('A')) {
+      var notInPainMod = gameState.notInPain / 500;
+      m.alpha = max(0.0, 1.0 - notInPainMod * notInPainMod * notInPainMod);
+    }
   }
 
   @override

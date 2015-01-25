@@ -56,11 +56,11 @@ class Game extends GameBase {
         new TweeningSystem(),
 
         new CanvasCleaningSystem(canvas, fillStyle: 'black'),
+        new RageModeRenderer(ctx),
         new BackgroundDotRenderingSystem(ctx),
         new ParticleRenderingSystem(ctx),
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
-        new HealthRenderingSystem(ctx),
         new MessageRenderingSystem(ctx),
         new GameStateRenderingSystem(ctx),
         new FpsRenderingSystem(ctx),
@@ -70,6 +70,8 @@ class Game extends GameBase {
         new FriendSpawner(),
         new LifetimeSystem(),
         new AttentionDelayDecreasingSystem(),
+
+        new CalmDownSystem(),
 
         new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];
   }
