@@ -277,3 +277,37 @@ class RageModeRenderer extends VoidEntitySystem {
   @override
   bool checkProcessing() => gameState.rageMode;
 }
+
+class GameOverRenderingSystem extends VoidEntitySystem {
+  TagManager tm;
+
+  CanvasRenderingContext2D ctx;
+
+  GameOverRenderingSystem(this.ctx);
+
+  @override
+  void processSystem() {
+    var score = 'Final Score: ${gameState.score.toInt()}';
+    ctx
+        ..save()
+        ..strokeStyle = '#202020'
+        ..lineWidth = 5
+        ..font = '200px Verdana';
+    var gameWidth = ctx.measureText('GAME').width;
+    var overWidth = ctx.measureText('OVER').width;
+    ctx
+        ..strokeText('GAME', 400 - gameWidth / 2, 30)
+        ..strokeText('OVER', 400 - overWidth / 2, 200)
+        ..font = '40px Verdana';
+    var scoreWidth = ctx.measureText(score).width;
+    ctx
+        ..lineWidth = 2
+        ..strokeText(score, 400 - scoreWidth / 2, 430)
+        ..fillStyle = 'grey'
+        ..fillText(score, 400 - scoreWidth / 2, 430)
+        ..restore();
+  }
+
+  @override
+  bool checkProcessing() => tm.getEntity(playerTag) == null;
+}
