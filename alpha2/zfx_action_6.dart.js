@@ -6027,83 +6027,83 @@ if(J.Df(u.gM(t),0)){y.px(S.Uw(C.N2,F.Ca()))
 y.aT()}}}},
 Hf:{
 "^":"ME;x,y,z,ch,Q,a,b,c,d,e,f,r",
-xU:function(a3){var z,y,x,w,v,u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2
+xU:function(a4){var z,y,x,w,v,u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3
 z=this.x.Vq("player")
-y=a3.br(0)
-for(x=0;x<y.length-1;++x){w=this.y
+y=a4.br(0)
+for(x=0;x<y.length-1;x=s){w=this.y
 v=y[x]
 u=J.Tf(w.a,J.F8(v))
 v=this.z
 if(x>=y.length)return H.e(y,x)
 w=y[x]
 t=J.Tf(v.a,J.F8(w))
-for(w=J.RE(u),s=x;s<y.length;++s){v=this.y
-r=y[s]
-q=J.Tf(v.a,J.F8(r))
-r=this.z
-if(s>=y.length)return H.e(y,s)
-v=y[s]
-p=J.Tf(r.a,J.F8(v))
+for(s=x+1,w=J.RE(u),r=s;r<y.length;++r){v=this.y
+q=y[r]
+p=J.Tf(v.a,J.F8(q))
+q=this.z
+if(r>=y.length)return H.e(y,r)
+v=y[r]
+o=J.Tf(q.a,J.F8(v))
 v=t.gjn()
-r=p.gjn()
+q=o.gjn()
 if(typeof v!=="number")return v.g()
-if(typeof r!=="number")return H.o(r)
-if(v+r>u.Cs(q)){v=this.ch
+if(typeof q!=="number")return H.o(q)
+if(v+q>u.Cs(p)){v=this.ch
 if(x>=y.length)return H.e(y,x)
-r=y[x]
-o=J.Tf(v.a,J.F8(r))
-r=this.ch
-if(s>=y.length)return H.e(y,s)
-v=y[s]
-n=J.Tf(r.a,J.F8(v))
-v=J.RE(q)
-m=J.aF(v.gx(q),w.gx(u))
-l=J.aF(v.gy(q),w.gy(u))
+q=y[x]
+n=J.Tf(v.a,J.F8(q))
+q=this.ch
+if(r>=y.length)return H.e(y,r)
+v=y[r]
+m=J.Tf(q.a,J.F8(v))
+v=J.RE(p)
+l=J.aF(v.gx(p),w.gx(u))
+k=J.aF(v.gy(p),w.gy(u))
+if(typeof k!=="number")H.vh(P.p(k))
 if(typeof l!=="number")H.vh(P.p(l))
-if(typeof m!=="number")H.vh(P.p(m))
-k=Math.atan2(l,m)
-v=J.U6(o)
-j=v.gv(o)
-r=J.U6(n)
-i=r.gv(n)
-h=v.gy(o)
-g=v.gx(o)
-if(typeof h!=="number")H.vh(P.p(h))
+j=Math.atan2(k,l)
+v=J.U6(n)
+i=v.gv(n)
+q=J.U6(m)
+h=q.gv(m)
+g=v.gy(n)
+f=v.gx(n)
 if(typeof g!=="number")H.vh(P.p(g))
-f=Math.atan2(h,g)
-h=r.gy(n)
-g=r.gx(n)
-if(typeof h!=="number")H.vh(P.p(h))
+if(typeof f!=="number")H.vh(P.p(f))
+e=Math.atan2(g,f)
+g=q.gy(m)
+f=q.gx(m)
 if(typeof g!=="number")H.vh(P.p(g))
-e=Math.atan2(h,g)
-h=f-k
-g=J.Qc(j)
-d=g.R(j,Math.cos(h))
-c=g.R(j,Math.sin(h))
-h=e-k
-g=J.Qc(i)
-b=g.R(i,Math.cos(h))
-a=g.R(i,Math.sin(h))
-if(typeof b!=="number")return H.o(b)
-a0=J.zR(J.aF(J.WB(d,2*b),d),2)
-if(typeof d!=="number")return H.o(d)
-a1=(b+2*d-b)/2
-h=Math.cos(k)
-if(typeof a0!=="number")return H.o(a0)
-g=k+1.5707963267948966
-a2=Math.cos(g)
-if(typeof c!=="number")return H.o(c)
-v.sx(o,h*a0+a2*c*0.8)
-h=Math.sin(k)
-v.sy(o,h*a0+Math.sin(g)*c*0.8)
-v=Math.cos(k)
-h=Math.cos(g)
+if(typeof f!=="number")H.vh(P.p(f))
+d=Math.atan2(g,f)
+g=e-j
+f=J.Qc(i)
+c=f.R(i,Math.cos(g))
+b=f.R(i,Math.sin(g))
+g=d-j
+f=J.Qc(h)
+a=f.R(h,Math.cos(g))
+a0=f.R(h,Math.sin(g))
 if(typeof a!=="number")return H.o(a)
-r.sx(n,v*a1+h*a*0.8)
-v=Math.sin(k)
-r.sy(n,v*a1+Math.sin(g)*a*0.8)}}}w=J.RE(z)
-q=J.Tf(this.y.a,w.gjO(z))
-p=J.Tf(this.z.a,w.gjO(z))
+a1=J.zR(J.aF(J.WB(c,2*a),c),2)
+if(typeof c!=="number")return H.o(c)
+a2=(a+2*c-a)/2
+g=Math.cos(j)
+if(typeof a1!=="number")return H.o(a1)
+f=j+1.5707963267948966
+a3=Math.cos(f)
+if(typeof b!=="number")return H.o(b)
+v.sx(n,g*a1+a3*b*0.8)
+g=Math.sin(j)
+v.sy(n,g*a1+Math.sin(f)*b*0.8)
+v=Math.cos(j)
+g=Math.cos(f)
+if(typeof a0!=="number")return H.o(a0)
+q.sx(m,v*a2+g*a0*0.8)
+v=Math.sin(j)
+q.sy(m,v*a2+Math.sin(f)*a0*0.8)}}}if(z!=null){w=J.RE(z)
+p=J.Tf(this.y.a,w.gjO(z))
+o=J.Tf(this.z.a,w.gjO(z))
 for(x=0;x<y.length;++x){w=this.y
 v=y[x]
 u=J.Tf(w.a,J.F8(v))
@@ -6111,16 +6111,16 @@ v=this.z
 if(x>=y.length)return H.e(y,x)
 w=y[x]
 w=J.Tf(v.a,J.F8(w)).gjn()
-v=p.gjn()
+v=o.gjn()
 if(typeof w!=="number")return w.g()
 if(typeof v!=="number")return H.o(v)
-if(w+v>u.Cs(q)){w=this.ch
+if(w+v>u.Cs(p)){w=this.ch
 if(x>=y.length)return H.e(y,x)
 v=y[x]
-o=J.Tf(w.a,J.F8(v))
-v=J.RE(o)
-v.sx(o,J.lX(J.EF(v.gx(o)),0.8))
-v.sy(o,J.lX(J.EF(v.gy(o)),0.8))}}},
+n=J.Tf(w.a,J.F8(v))
+v=J.RE(n)
+v.sx(n,J.lX(J.EF(v.gx(n)),0.8))
+v.sy(n,J.lX(J.EF(v.gy(n)),0.8))}}}},
 IY:function(){return!0},
 eQ:function(){var z,y,x
 this.bZ()
@@ -6554,7 +6554,7 @@ this.cy=x
 this.x=this.a.y.p(0,C.hU)}},
 EI:{
 "^":"r:23;Q,a,b",
-$1:function(a){var z,y,x,w,v,u,t,s,r,q,p,o,n
+$1:function(a){var z,y,x,w,v,u,t,s,r,q,p,o
 z=this.Q
 y=J.RE(a)
 x=J.Tf(z.y.a,y.gjO(a))
@@ -6568,19 +6568,20 @@ z=this.b.gjn()
 r=w.gjn()
 if(typeof z!=="number")return z.g()
 if(typeof r!=="number")return H.o(r)
-q=J.RE(y)
-p=J.RE(x)
-o=J.aF(q.gx(y),p.gx(x))
-n=Math.atan2(H.E0(J.aF(q.gy(y),p.gy(x))),H.E0(o))
-p=J.RE(t)
-y=p.gy(t)
-q=p.gx(t)
-Math.atan2(H.E0(y),H.E0(q))
-Math.sqrt(H.E0(J.WB(J.lX(p.gx(t),p.gx(t)),J.lX(p.gy(t),p.gy(t)))))
-y=J.RE(v)
-if(s-(z+r+2)<=0)y.sM(v,0)
-else{y.sM(v,0.001)
-J.eW(u,n)}}},
+q=s-(z+r+2)
+r=J.RE(y)
+z=J.RE(x)
+p=J.aF(r.gx(y),z.gx(x))
+o=Math.atan2(H.E0(J.aF(r.gy(y),z.gy(x))),H.E0(p))
+z=J.RE(t)
+y=z.gy(t)
+r=z.gx(t)
+Math.atan2(H.E0(y),H.E0(r))
+Math.sqrt(H.E0(J.WB(J.lX(z.gx(t),z.gx(t)),J.lX(z.gy(t),z.gy(t)))))
+z=J.RE(v)
+if(q<=25)z.sM(v,0)
+else{z.sM(v,Math.sqrt(H.E0(q))/100000)
+J.eW(u,o)}}},
 RL:{
 "^":"HK;x,y,Q,a,b,c,d,e,f,r",
 Oz:function(a){var z,y,x,w,v,u,t
