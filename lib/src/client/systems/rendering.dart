@@ -23,7 +23,7 @@ class CircleRenderingSystem extends EntityProcessingSystem {
     var heartbeatMod = world.time % beat;
     var radius = circle.radius;
     if (heartbeatMod > 0.8 * beat) {
-      radius = radius + (1000 * heartbeatMod/beat - 800) * 0.01;
+      radius = radius + (1000 * heartbeatMod / beat - 800) * 0.01;
     }
 
     ctx
@@ -181,6 +181,47 @@ class ParticleRenderingSystem extends EntityProcessingSystem {
   @override
   void begin() {
     ctx.save();
+  }
+
+  @override
+  void end() {
+    ctx.restore();
+  }
+}
+
+class GameStateRenderingSystem extends VoidEntitySystem {
+  CanvasRenderingContext2D ctx;
+  NumberFormat nf = new NumberFormat('#.###');
+
+  GameStateRenderingSystem(this.ctx);
+
+  @override
+  void begin() {
+    ctx
+        ..save()
+        ..lineWidth = 1
+        ..fillStyle = 'white'
+        ..strokeStyle = 'cyan';
+  }
+
+  @override
+  void processSystem() {
+    var score = gameState.score.toInt();
+    var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
+
+    printState('Score', nf.format(score), scoreWidth, 20);
+    printState('Friends', nf.format(gameState.friendsAlive), scoreWidth, 40);
+    printState('Killed Friends', nf.format(gameState.friendsKilled), scoreWidth, 60);
+  }
+
+  void printState(String label, String text, int scoreWidth, int y) {
+    var width = ctx.measureText(text).width;
+    var labelWidth = ctx.measureText(label).width;
+    ctx
+        ..strokeText('$label:', 770 - labelWidth - scoreWidth, y)
+        ..strokeText('$text', 790 - width, y)
+        ..fillText('$label:', 770 - labelWidth - scoreWidth, y)
+        ..fillText('$text', 790 - width, y);
   }
 
   @override

@@ -4,6 +4,7 @@ import 'dart:html' hide Player, Timeline;
 
 import 'package:zfx_action_6/shared.dart';
 import 'package:gamedev_helpers/gamedev_helpers.dart' hide Triangle;
+import 'package:intl/intl.dart';
 
 //part 'src/client/systems/name.dart';
 part 'src/client/systems/events.dart';
@@ -34,6 +35,8 @@ class Game extends GameBase {
     return [
         new CircleDestructionSystem(),
 
+        new GameStateUpdateingSystem(),
+
         new MouseInputHandlingSystem(canvas),
         new AcccelerationSystem(),
         new ThrusterParticleEmittingSystem(),
@@ -53,6 +56,7 @@ class Game extends GameBase {
         new CircleRenderingSystem(ctx),
         new HealthRenderingSystem(ctx),
         new MessageRenderingSystem(ctx),
+        new GameStateRenderingSystem(ctx),
         new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),

@@ -159,6 +159,8 @@ class CircleDestructionSystem extends EntityProcessingSystem {
               new Lifetime(lifetime)]);
     }
 
+    gameState.friendsKilled += 1;
+    gameState.friendsAlive -= 1;
     entity.deleteFromWorld();
     processed = true;
   }
@@ -305,6 +307,8 @@ class FriendCollectingSystem extends EntitySystem {
             ..addComponent(new Acceleration())
             ..addComponent(new Thruster(c.radius))
             ..changedInWorld();
+
+        gameState.friendsAlive += 1;
       }
     });
   }
