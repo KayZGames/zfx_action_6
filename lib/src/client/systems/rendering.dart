@@ -198,17 +198,18 @@ class GameStateRenderingSystem extends VoidEntitySystem {
     var highScore = gameState.highScore;
     var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
     var highScoreWidth = ctx.measureText(nf.format(highScore)).width.toInt();
+    var width = max(scoreWidth, highScoreWidth);
 
-    printState('HighScore', nf.format(highScore), highScoreWidth, 0);
-    printState('Score', nf.format(score), scoreWidth, 20);
+    printState('HighScore', nf.format(highScore), width, 0);
+    printState('Score', nf.format(score), width, 20);
     if (gameState.friendsAlive > 0 || gameState.friendsKilled > 0) {
-      printState('Friends', nf.format(gameState.friendsAlive), scoreWidth, 40);
+      printState('Friends', nf.format(gameState.friendsAlive), width, 40);
     }
     if (gameState.friendsKilled > 0) {
-      printState('Killed Friends', nf.format(gameState.friendsKilled), scoreWidth, 60);
+      printState('Killed Friends', nf.format(gameState.friendsKilled), width, 60);
     }
     if (gameState.trianglesKilled > 0) {
-      printState('Destroyed Triangles', nf.format(gameState.trianglesKilled), scoreWidth, 80);
+      printState('Destroyed Triangles', nf.format(gameState.trianglesKilled), width, 80);
     }
 
     renderPainometer();
