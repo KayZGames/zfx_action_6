@@ -71,7 +71,7 @@ class TriangleRenderingSystem extends EntityProcessingSystem {
     var size = t.size * beatMod;
     ctx
         ..beginPath()
-        ..fillStyle = c.fillStyle
+        ..lineWidth = 2
         ..strokeStyle = c.strokeStyle
         ..moveTo(p.x + cos(angle) * size, p.y + sin(angle) * size)
         ..lineTo(p.x + cos(angle + PI * 2 / 3) * size, p.y + sin(angle + PI * 2 / 3) * size)
