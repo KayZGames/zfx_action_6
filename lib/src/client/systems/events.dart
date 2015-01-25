@@ -5,6 +5,7 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
   Mapper<Position> pm;
   GroupManager gm;
   TagManager tm;
+  HighScoreSystem hss;
   Point<int> offset = new Point<int>(0, 0);
 
   CanvasElement canvas;
@@ -33,6 +34,7 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
           tm.register(e, playerTag);
           gm.add(e, circleGroup);
           gameState = new GameState();
+          hss.updateHighscore();
         }
       }
     });

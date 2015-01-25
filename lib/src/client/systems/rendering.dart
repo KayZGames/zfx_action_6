@@ -192,8 +192,11 @@ class GameStateRenderingSystem extends VoidEntitySystem {
   @override
   void processSystem() {
     var score = gameState.score.toInt();
+    var highScore= gameState.highScore;
     var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
+    var highScoreWidth = ctx.measureText(nf.format(highScore)).width.toInt();
 
+    printState('HighScore', nf.format(highScore), highScoreWidth, 0);
     printState('Score', nf.format(score), scoreWidth, 20);
     if (gameState.friendsAlive > 0 || gameState.friendsKilled > 0) {
       printState('Friends', nf.format(gameState.friendsAlive), scoreWidth, 40);

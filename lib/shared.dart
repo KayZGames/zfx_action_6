@@ -26,6 +26,7 @@ class GameState {
   double notInPain = 0.0;
   num painometer = 0.0;
   bool rageMode = false;
+  int highScore = 0;
 
   double get rageMod {
     var mod = 1 - gameState.painometer / 100;
