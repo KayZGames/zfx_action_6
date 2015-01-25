@@ -37,7 +37,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
             var m = new Message(messages[random.nextInt(messages.length)]);
             new Tween.to(m, Alpha.ALPHA, 2500.0)
                 ..targetValues = [0.0]
-                ..easing = TweenEquations.easeInOutCubic
+                ..easing = TweenEquations.easeInCubic
                 ..start(tweenManager);
             circle
                 ..addComponent(m)
@@ -209,9 +209,9 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       var entities = gm.getEntities(circleGroup);
       entities.forEach((entity) {
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Alpha.ALPHA, 4000.0)
+        new Tween.to(m, Alpha.ALPHA, 2500.0)
             ..targetValues = [0.0]
-            ..easing = TweenEquations.easeOutCubic
+            ..easing = TweenEquations.easeInCubic
             ..start(tweenManager);
         entity
             ..addComponent(m)
@@ -455,7 +455,7 @@ class AttentionDelayDecreasingSystem extends EntityProcessingSystem {
       var m = new Message(messages[random.nextInt(messages.length)]);
       new Tween.to(m, Alpha.ALPHA, 2500.0)
           ..targetValues = [0.0]
-          ..easing = TweenEquations.easeInOutCubic
+          ..easing = TweenEquations.easeInCubic
           ..start(tweenManager);
 
       entity
