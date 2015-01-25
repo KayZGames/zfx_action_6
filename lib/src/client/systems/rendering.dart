@@ -288,6 +288,7 @@ class GameOverRenderingSystem extends VoidEntitySystem {
   @override
   void processSystem() {
     var score = 'Final Score: ${gameState.score.toInt()}';
+    var restart = 'click to try again';
     ctx
         ..save()
         ..strokeStyle = '#202020'
@@ -302,9 +303,15 @@ class GameOverRenderingSystem extends VoidEntitySystem {
     var scoreWidth = ctx.measureText(score).width;
     ctx
         ..lineWidth = 2
-        ..strokeText(score, 400 - scoreWidth / 2, 430)
         ..fillStyle = 'grey'
+        ..strokeText(score, 400 - scoreWidth / 2, 430)
         ..fillText(score, 400 - scoreWidth / 2, 430)
+        ..lineWidth = 1
+        ..font = '20px Verdana';
+    var restartWidth = ctx.measureText(restart).width;
+    ctx
+        ..strokeText(restart, 400 - restartWidth / 2, 470)
+        ..fillText(restart, 400 - restartWidth / 2, 470)
         ..restore();
   }
 

@@ -15,7 +15,7 @@ const String circleGroup = 'circles';
 const int fftSize = 512;
 const int frequencyBinCount = fftSize ~/ 2;
 
-final GameState gameState = new GameState();
+GameState gameState = new GameState();
 
 class GameState {
   double score = 0.0;
