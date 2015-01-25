@@ -1,16 +1,21 @@
 library client;
 
 import 'dart:html' hide Player, Timeline;
+import 'dart:web_audio';
+import 'dart:typed_data';
 
 import 'package:zfx_action_6/shared.dart';
 import 'package:gamedev_helpers/gamedev_helpers.dart' hide Triangle;
 import 'package:intl/intl.dart';
 
 //part 'src/client/systems/name.dart';
+part 'src/client/systems/audio.dart';
 part 'src/client/systems/events.dart';
 part 'src/client/systems/rendering.dart';
 
 class Game extends GameBase {
+
+  AnalyserNode audioAnalyser;
 
   Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600) {
     Tween.waypointsLimit = 1;
@@ -34,6 +39,7 @@ class Game extends GameBase {
   List<EntitySystem> getSystems() {
     return [
         new CircleDestructionSystem(),
+        new PainAnalysingSystem(audioAnalyser),
 
         new GameStateUpdateingSystem(),
 
@@ -71,5 +77,18 @@ class Game extends GameBase {
   onInit() {
     world.addManager(new TagManager());
     world.addManager(new GroupManager());
+
+    var audioCtx = new AudioContext();
+
+    return window.navigator.getUserMedia(audio: true, video: false).then((mediaStream) {
+      audioAnalyser = audioCtx.createAnalyser();
+      audioAnalyser.fftSize = fftSize;
+      audioCtx.createMediaStreamSource(mediaStream).connectNode(audioAnalyser);
+    }).catchError((error) {});
+  }
+
+  onInitDone() {
+    querySelector('canvas').style.cursor = 'none';
+    querySelector('#reasonForAudio').style.display = 'none';
   }
 }

@@ -12,12 +12,17 @@ part 'src/shared/systems/spawner.dart';
 const String playerTag = 'player';
 const String circleGroup = 'circles';
 
+const int fftSize = 512;
+const int frequencyBinCount = fftSize ~/ 2;
+
 final GameState gameState = new GameState();
 
 class GameState {
   double score = 0.0;
   int friendsAlive = 0;
   int friendsKilled = 0;
+  double inPain = 0.0;
+  double notInPain = 0.0;
 }
 
 void easeParticle(Particle particle, double lifetime) {

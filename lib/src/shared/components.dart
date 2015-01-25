@@ -114,7 +114,8 @@ class AttentionWhore extends Component {
 
 class Message extends Component with Alpha implements Tweenable {
   String message;
-  Message(this.message);
+  int fontSize;
+  Message(this.message, {this.fontSize: 14});
 }
 
 class Particle extends Component with Alpha implements Tweenable {}

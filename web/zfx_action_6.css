@@ -1,8 +1,5 @@
 body {
   text-align: center;
   background-color: #080808;
-}
-
-canvas:hover {
-  cursor: none;
+  color: white;
 }

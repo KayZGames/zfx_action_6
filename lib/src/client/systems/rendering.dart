@@ -122,22 +122,24 @@ class BackgroundDotRenderingSystem extends EntityProcessingSystem {
 class MessageRenderingSystem extends EntityProcessingSystem {
   Mapper<Message> mm;
   Mapper<Position> pm;
+  Mapper<Circle> cm;
 
   CanvasRenderingContext2D ctx;
 
-  MessageRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Message, Position]));
+  MessageRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Message, Position, Circle]));
 
   @override
   void processEntity(Entity entity) {
     var p = pm[entity];
     var m = mm[entity];
+    var c = cm[entity];
 
+    ctx.font = '${m.fontSize}px Verdana';
     var width = ctx.measureText(m.message).width;
-
     ctx
         ..fillStyle = 'white'
         ..globalAlpha = m.alpha
-        ..fillText(m.message, p.x - width / 2, p.y - 20);
+        ..fillText(m.message, p.x - width / 2, p.y - c.radius - m.fontSize - 10);
 
     if (m.alpha == 0.0) {
       entity
