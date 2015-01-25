@@ -2127,40 +2127,41 @@ y.vn(z)
 y.sWi(z,1)
 y.sku(z,"white")
 y.sLm(z,"cyan")},
-ce:function(){var z,y,x,w,v,u,t,s,r,q,p
+ce:function(){var z,y,x,w,v,u,t,s,r,q,p,o,n
 z=C.CD.yu($.FW().Q)
 y=$.FW().x
 x=this.x
 w=this.y
 v=J.RE(x)
-u=P.u(J.XH(v.YU(x,w.Yq(0,z)).width),J.XH(v.YU(x,w.Yq(0,y)).width))
-this.Fm("HighScore",w.Yq(0,y),u,0)
+u=J.XH(v.YU(x,w.Yq(0,z)).width)
+t=J.XH(v.YU(x,w.Yq(0,y)).width)
+this.Fm("HighScore",w.Yq(0,y),t,0)
 this.Fm("Score",w.Yq(0,z),u,20)
-t=$.FW()
-s=t.a
-if(s>0||t.b>0)this.Fm("Friends",w.Yq(0,s),u,40)
-t=$.FW().b
-if(t>0)this.Fm("Killed Friends",w.Yq(0,t),u,60)
-t=$.FW().c
-if(t>0)this.Fm("Destroyed Triangles",w.Yq(0,t),u,80)
-r=v.Tu(x,0,0,600,1)
-r.addColorStop(0,"green")
-r.addColorStop(1,"red")
-q=P.C(600,600*$.FW().f/100)
+s=$.FW()
+r=s.a
+if(r>0||s.b>0)this.Fm("Friends",w.Yq(0,r),u,40)
+s=$.FW().b
+if(s>0)this.Fm("Killed Friends",w.Yq(0,s),u,60)
+s=$.FW().c
+if(s>0)this.Fm("Destroyed Triangles",w.Yq(0,s),u,80)
+q=v.Tu(x,0,0,600,1)
+q.addColorStop(0,"green")
+q.addColorStop(1,"red")
+p=P.C(600,600*$.FW().f/100)
 if($.FW().f>=100){v.sWi(x,1+(1+Math.sin(H.E0(this.a.cy/100)))*2)
 v.sLm(x,"#8A0707")
 v.mr(x,0,0,800,600)
-p="Left click to enter RAGE MODE"}else p="PAIN-O-METER"
-u=v.YU(x,p).width
-v.sku(x,r)
+o="Left click to enter RAGE MODE"}else o="PAIN-O-METER"
+n=v.YU(x,o).width
+v.sku(x,q)
 v.sLm(x,"cyan")
-v.XJ(x,100,570,q,20)
+v.XJ(x,100,570,p,20)
 v.mr(x,100,570,600,20)
 v.sku(x,"white")
-if(typeof u!=="number")return u.S()
-w=400-u/2
-v.af(x,p,w,572)
-v.lR(x,p,w,572)},
+if(typeof n!=="number")return n.S()
+w=400-n/2
+v.af(x,o,w,572)
+v.lR(x,o,w,572)},
 Fm:function(a,b,c,d){var z,y,x,w,v,u
 z=this.x
 y=J.RE(z)
