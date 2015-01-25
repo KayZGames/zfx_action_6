@@ -23,9 +23,12 @@ class CircleRenderingSystem extends EntityProcessingSystem {
     var mod = 0.01;
     var fillStyle = color.fillStyle;
     if (gameState.rageMode) {
-      beat = 250;
-      mod = 0.025;
-      fillStyle = '#8A0707';
+      // hacky hacky hack
+      if (fillStyle != 'white') {
+        beat = 250;
+        mod = 0.025;
+        fillStyle = '#8A0707';
+      }
     }
     var heartbeatMod = world.time % beat;
     var radius = circle.radius;
@@ -192,7 +195,7 @@ class GameStateRenderingSystem extends VoidEntitySystem {
   @override
   void processSystem() {
     var score = gameState.score.toInt();
-    var highScore= gameState.highScore;
+    var highScore = gameState.highScore;
     var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
     var highScoreWidth = ctx.measureText(nf.format(highScore)).width.toInt();
 
