@@ -63,7 +63,7 @@ class CircleCollisionSystem extends EntitySystem {
     for (int i = 0; i < entitiesAsList.length - 1; i++) {
       var p1 = pm[entitiesAsList[i]];
       var c1 = cm[entitiesAsList[i]];
-      for (int j = i; j < entitiesAsList.length; j++) {
+      for (int j = i + 1; j < entitiesAsList.length; j++) {
         var p2 = pm[entitiesAsList[j]];
         var c2 = cm[entitiesAsList[j]];
         if (c1.radius + c2.radius > p1.distanceTo(p2)) {
@@ -100,16 +100,18 @@ class CircleCollisionSystem extends EntitySystem {
         }
       }
     }
-    var p2 = pm[player];
-    var c2 = cm[player];
-    for (int i = 0; i < entitiesAsList.length; i++) {
-      var p1 = pm[entitiesAsList[i]];
-      var c1 = cm[entitiesAsList[i]];
-      var minDistance = c1.radius + c2.radius;
-      if (minDistance > p1.distanceTo(p2)) {
-        var v1 = vm[entitiesAsList[i]];
-        v1.x = -v1.x * 0.8;
-        v1.y = -v1.y * 0.8;
+    if (player != null) {
+      var p2 = pm[player];
+      var c2 = cm[player];
+      for (int i = 0; i < entitiesAsList.length; i++) {
+        var p1 = pm[entitiesAsList[i]];
+        var c1 = cm[entitiesAsList[i]];
+        var minDistance = c1.radius + c2.radius;
+        if (minDistance > p1.distanceTo(p2)) {
+          var v1 = vm[entitiesAsList[i]];
+          v1.x = -v1.x * 0.8;
+          v1.y = -v1.y * 0.8;
+        }
       }
     }
   }
@@ -352,10 +354,10 @@ class FriendMovementSystem extends EntitySystem {
       var velocityAngle = atan2(v.y, v.x);
       var velocity = sqrt(v.x * v.x + v.y * v.y);
 
-      if (missingDistance <= 0) {
+      if (missingDistance <= 25) {
         a.value = 0.0;
       } else {
-        a.value = 0.001;
+        a.value = sqrt(missingDistance) / 100000;
         o.value = angle;
       }
     });
