@@ -17,6 +17,8 @@ part 'src/client/systems/rendering.dart';
 
 class Game extends GameBase {
 
+  MediaStreamAudioSourceNode mediaStreamSource;
+
   AnalyserNode audioAnalyser;
 
   Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600) {
@@ -90,15 +92,15 @@ class Game extends GameBase {
     return window.navigator.getUserMedia(audio: true, video: false).then((mediaStream) {
       audioAnalyser = audioCtx.createAnalyser();
       audioAnalyser.fftSize = fftSize;
-      audioCtx.createMediaStreamSource(mediaStream).connectNode(audioAnalyser);
-      eventBus.fire(new AnalyticsTrackEvent('audio', 'yes'), sync: false);
+      mediaStreamSource = audioCtx.createMediaStreamSource(mediaStream);
+      mediaStreamSource.connectNode(audioAnalyser);
     }).catchError((error) {
-      eventBus.fire(new AnalyticsTrackEvent('audio', 'no'), sync: false);
     });
   }
 
   onInitDone() {
     querySelector('canvas').style.cursor = 'none';
     querySelector('#reasonForAudio').style.display = 'none';
+    eventBus.fire(new AnalyticsTrackEvent('audio', '${mediaStreamSource != null}'));
   }
 }
