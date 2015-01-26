@@ -16,10 +16,10 @@ class PainAnalysingSystem extends VoidEntitySystem {
 
     var player = tm.getEntity(playerTag);
     if (!gameState.rageMode &&
-        byteFrequencyData[100] < 10 &&
+        byteFrequencyData[100] < 30 &&
         byteFrequencyData[5] > 100 &&
         byteFrequencyData[22] < byteFrequencyData[33] &&
-        byteFrequencyData[55] > 40) {
+        (byteFrequencyData[55] > 40 || byteFrequencyData[80] > byteFrequencyData[57])) {
       if (!successfulCry) {
         successfulCry = true;
         eventBus.fire(new AnalyticsTrackEvent('in pain', 'success'));
