@@ -3,6 +3,7 @@ part of client;
 class PainAnalysingSystem extends VoidEntitySystem {
   TagManager tm;
   Mapper<Message> mm;
+  bool successfulCry = false;
 
   AnalyserNode node;
   Uint8List byteFrequencyData = new Uint8List(frequencyBinCount);
@@ -19,6 +20,10 @@ class PainAnalysingSystem extends VoidEntitySystem {
         byteFrequencyData[5] > 100 &&
         byteFrequencyData[22] < byteFrequencyData[33] &&
         byteFrequencyData[55] > 40) {
+      if (!successfulCry) {
+        successfulCry = true;
+        eventBus.fire(new AnalyticsTrackEvent('in pain', 'success'));
+      }
       gameState.notInPain = 0.0;
       var before = gameState.inPain ~/ 100.0;
       gameState.inPain += world.delta;
