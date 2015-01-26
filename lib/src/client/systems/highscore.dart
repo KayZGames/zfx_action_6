@@ -1,5 +1,7 @@
 part of client;
 
+typedef void UpdateBestValue(int currentValue);
+
 class HighScoreSystem extends VoidEntitySystem {
   TagManager tm;
   Store store;
@@ -9,6 +11,7 @@ class HighScoreSystem extends VoidEntitySystem {
     store = new Store('zfaxaction6', 'highscore');
     store.open().then((_) {
       updateHighscore();
+      updateScreamTime();
     });
   }
 
@@ -18,11 +21,19 @@ class HighScoreSystem extends VoidEntitySystem {
   }
 
   void updateHighscore() {
-    store.getByKey('score').then((score) {
-      if (null == score || score < gameState.score) {
-        store.save(gameState.score.toInt(), 'score');
+    checkAndUpdate('score', gameState.score, (stored) => gameState.highScore = stored);
+  }
+
+  void updateScreamTime() {
+    checkAndUpdate('longestScream', gameState.inPain, (stored) => gameState.longestScream = stored);
+  }
+
+  void checkAndUpdate(String key, double currentValue, UpdateBestValue updateFunction) {
+    store.getByKey(key).then((score) {
+      if (null == score || score < currentValue) {
+        store.save(currentValue.toInt(), key);
       } else {
-        gameState.highScore = score;
+        updateFunction(score);
       }
     });
   }

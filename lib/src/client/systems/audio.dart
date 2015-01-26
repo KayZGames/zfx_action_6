@@ -3,6 +3,8 @@ part of client;
 class PainAnalysingSystem extends VoidEntitySystem {
   TagManager tm;
   Mapper<Message> mm;
+  HighScoreSystem hhs;
+
   bool successfulCry = false;
 
   AnalyserNode node;
@@ -35,6 +37,7 @@ class PainAnalysingSystem extends VoidEntitySystem {
       gameState.notInPain += world.delta;
     }
     if (gameState.notInPain > 300.0) {
+      hhs.updateScreamTime();
       gameState.inPain = 0.0;
     }
     Message m;

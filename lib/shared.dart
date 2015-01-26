@@ -27,6 +27,7 @@ class GameState {
   num painometer = 0.0;
   bool rageMode = false;
   int highScore = 0;
+  int longestScream = 0;
 
   double get rageMod {
     var mod = 1 - gameState.painometer / 100;

@@ -66,8 +66,8 @@ class Game extends GameBase {
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
         new MessageRenderingSystem(ctx),
-        new GameStateRenderingSystem(ctx),
         new GameOverRenderingSystem(ctx),
+        new GameStateRenderingSystem(ctx),
 //        new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),

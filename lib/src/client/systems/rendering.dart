@@ -198,18 +198,25 @@ class GameStateRenderingSystem extends VoidEntitySystem {
     var highScore = gameState.highScore;
     var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
     var highScoreWidth = ctx.measureText(nf.format(highScore)).width.toInt();
-    var width = max(scoreWidth, highScoreWidth);
+    var screamTimeWidth = ctx.measureText(nf.format(gameState.longestScream)).width.toInt();
+    var currentScreamTimeWidth = ctx.measureText(nf.format(gameState.inPain)).width.toInt();
+    var width = max(scoreWidth, max(highScoreWidth, max(screamTimeWidth, currentScreamTimeWidth)));
 
-    printState('HighScore', nf.format(highScore), width, 0);
-    printState('Score', nf.format(score), width, 20);
+    if (gameState.longestScream > 0) {
+      printStateLeft('Longest Scream (ms)', nf.format(gameState.longestScream), width, 0);
+    }
+    printStateLeft('HighScore', nf.format(highScore), width, 20);
+
+    printStateRight('Score', nf.format(score), width, 0);
+    printStateRight('Current Scream (ms)', nf.format(gameState.inPain.toInt()), width, 20);
     if (gameState.friendsAlive > 0 || gameState.friendsKilled > 0) {
-      printState('Friends', nf.format(gameState.friendsAlive), width, 40);
+      printStateRight('Friends', nf.format(gameState.friendsAlive), width, 40);
     }
     if (gameState.friendsKilled > 0) {
-      printState('Killed Friends', nf.format(gameState.friendsKilled), width, 60);
+      printStateRight('Killed Friends', nf.format(gameState.friendsKilled), width, 60);
     }
     if (gameState.trianglesKilled > 0) {
-      printState('Destroyed Triangles', nf.format(gameState.trianglesKilled), width, 80);
+      printStateRight('Destroyed Triangles', nf.format(gameState.trianglesKilled), width, 80);
     }
 
     renderPainometer();
@@ -240,14 +247,18 @@ class GameStateRenderingSystem extends VoidEntitySystem {
         ..fillText(label, 400 - width / 2, 572);
   }
 
-  void printState(String label, String text, int scoreWidth, int y) {
+  void printStateLeft(String label, String text, int scoreWidth, int y) =>
+      printState(label, text, scoreWidth, scoreWidth + 150, y);
+  void printStateRight(String label, String text, int scoreWidth, int y) => printState(label, text, scoreWidth, 770, y);
+
+  void printState(String label, String text, int scoreWidth, int x, int y) {
     var width = ctx.measureText(text).width;
     var labelWidth = ctx.measureText(label).width;
     ctx
-        ..strokeText('$label:', 770 - labelWidth - scoreWidth, y)
-        ..strokeText('$text', 790 - width, y)
-        ..fillText('$label:', 770 - labelWidth - scoreWidth, y)
-        ..fillText('$text', 790 - width, y);
+        ..strokeText('$label:', x - labelWidth - scoreWidth, y)
+        ..strokeText('$text', x + 20 - width, y)
+        ..fillText('$label:', x - labelWidth - scoreWidth, y)
+        ..fillText('$text', x + 20 - width, y);
   }
 
   @override
