@@ -9,7 +9,6 @@ dependencies:
   gamedev_helpers:
     path: ../gamedev_helpers
   hop: any
-  intl: any
   lawndart: any
 transformers:
 - dart_to_js_script_rewriter

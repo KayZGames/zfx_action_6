@@ -6,7 +6,6 @@ import 'dart:typed_data';
 
 import 'package:zfx_action_6/shared.dart';
 import 'package:gamedev_helpers/gamedev_helpers.dart' hide Triangle;
-import 'package:intl/intl.dart';
 import 'package:lawndart/lawndart.dart';
 
 //part 'src/client/systems/name.dart';
