@@ -199,7 +199,7 @@ class GameStateRenderingSystem extends VoidEntitySystem {
     var scoreWidth = ctx.measureText(nf.format(score)).width.toInt();
     var highScoreWidth = ctx.measureText(nf.format(highScore)).width.toInt();
     var screamTimeWidth = ctx.measureText(nf.format(gameState.longestScream)).width.toInt();
-    var currentScreamTimeWidth = ctx.measureText(nf.format(gameState.inPain)).width.toInt();
+    var currentScreamTimeWidth = ctx.measureText(nf.format(gameState.inPain.toInt())).width.toInt();
     var width = max(scoreWidth, max(highScoreWidth, max(screamTimeWidth, currentScreamTimeWidth)));
 
     if (gameState.longestScream > 0) {
