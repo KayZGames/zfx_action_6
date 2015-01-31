@@ -3,9 +3,10 @@ library client;
 import 'dart:html' hide Player, Timeline;
 import 'dart:web_audio';
 import 'dart:typed_data';
+import 'dart:web_gl';
 
 import 'package:zfx_action_6/shared.dart';
-import 'package:gamedev_helpers/gamedev_helpers.dart' hide Triangle;
+import 'package:gamedev_helpers/gamedev_helpers.dart' hide Triangle, CanvasCleaningSystem;
 import 'package:lawndart/lawndart.dart';
 
 //part 'src/client/systems/name.dart';
@@ -13,6 +14,7 @@ part 'src/client/systems/highscore.dart';
 part 'src/client/systems/audio.dart';
 part 'src/client/systems/events.dart';
 part 'src/client/systems/rendering.dart';
+part 'src/client/systems/webgl.dart';
 
 class Game extends GameBase {
 
@@ -20,7 +22,7 @@ class Game extends GameBase {
 
   AnalyserNode audioAnalyser;
 
-  Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600) {
+  Game() : super.noAssets('zfx_action_6', 'canvas', 800, 600, webgl: true) {
     Tween.waypointsLimit = 1;
   }
 
@@ -58,15 +60,17 @@ class Game extends GameBase {
 
         new TweeningSystem(),
 
-        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
-        new RageModeRenderer(ctx),
-        new BackgroundDotRenderingSystem(ctx),
-        new ParticleRenderingSystem(ctx),
-        new TriangleRenderingSystem(ctx),
-        new CircleRenderingSystem(ctx),
-        new MessageRenderingSystem(ctx),
-        new GameOverRenderingSystem(ctx),
-        new GameStateRenderingSystem(ctx),
+        new CanvasCleaningSystem(ctx),
+
+//        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
+//        new RageModeRenderer(ctx),
+//        new BackgroundDotRenderingSystem(ctx),
+//        new ParticleRenderingSystem(ctx),
+//        new TriangleRenderingSystem(ctx),
+//        new CircleRenderingSystem(ctx),
+//        new MessageRenderingSystem(ctx),
+//        new GameOverRenderingSystem(ctx),
+//        new GameStateRenderingSystem(ctx),
 //        new FpsRenderingSystem(ctx),
 
         new TriangleSpawningSystem(),
