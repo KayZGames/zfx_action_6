@@ -13,35 +13,11 @@ class CanvasCleaningSystem extends VoidEntitySystem {
   }
 }
 
-class BackgroundDotRenderingSystem extends EntitySystem {
-  Mapper<Position> pm;
-  Mapper<Color> cm;
-  Mapper<Background> bm;
-
+abstract class WebGlRenderingSystem extends EntitySystem {
   RenderingContext gl;
   Program program;
   bool success = true;
-
-  static const String vShaderSource = '''
-attribute vec4 a_Position;
-attribute vec4 a_FragColor;
-attribute float a_PointSize;
-varying vec4 v_FragColor;
-void main() {
-  gl_Position = a_Position;
-  gl_PointSize = a_PointSize;
-  v_FragColor = a_FragColor;
-}
-''';
-  static const fShaderSource = '''
-precision highp float;
-varying vec4 v_FragColor;
-void main() {
-  gl_FragColor = v_FragColor;
-}
-''';
-  BackgroundDotRenderingSystem(this.gl) : super(Aspect.getAspectForAllOf([Background, Position, Color]));
-
+  WebGlRenderingSystem(this.gl, Aspect aspect) : super(aspect);
   @override
   void initialize() {
     var vShader = createShader(RenderingContext.VERTEX_SHADER, vShaderSource);
@@ -70,11 +46,32 @@ void main() {
     return shader;
   }
 
-
   @override
   void begin() {
     gl.useProgram(program);
   }
+
+  void buffer(int index, Float32List items, int itemSize) {
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(RenderingContext.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(RenderingContext.ARRAY_BUFFER, items, RenderingContext.STREAM_DRAW);
+    gl.vertexAttribPointer(index, itemSize, RenderingContext.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(index);
+  }
+
+  @override
+  bool checkProcessing() => success;
+
+  String get vShaderSource;
+  String get fShaderSource;
+}
+
+class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
+  Mapper<Position> pm;
+  Mapper<Color> cm;
+  Mapper<Background> bm;
+  BackgroundDotRenderingSystem(RenderingContext gl)
+      : super(gl, Aspect.getAspectForAllOf([Background, Position, Color]));
 
   @override
   void processEntities(Iterable<Entity> entities) {
@@ -92,8 +89,8 @@ void main() {
         var c = cm[entity];
         var b = bm[entity];
 
-        positions[index * 2] = p.x / 400 - 1;
-        positions[index * 2 + 1] = -(p.y / 300 - 1);
+        positions[index * 2] = p.x;
+        positions[index * 2 + 1] = p.y;
         sizes[index] = b.size;
         colors[index * 4] = c.red;
         colors[index * 4 + 1] = c.green;
@@ -110,14 +107,22 @@ void main() {
     }
   }
 
-  void buffer(int index, Float32List items, int itemSize) {
-    var vertexBuffer = gl.createBuffer();
-    gl.bindBuffer(RenderingContext.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(RenderingContext.ARRAY_BUFFER, items, RenderingContext.STATIC_DRAW);
-    gl.vertexAttribPointer(index, itemSize, RenderingContext.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(index);
-  }
-
-  @override
-  bool checkProcessing() => success;
+  String get vShaderSource => '''
+attribute vec2 a_Position;
+attribute vec4 a_FragColor;
+attribute float a_PointSize;
+varying vec4 v_FragColor;
+void main() {
+  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_PointSize = a_PointSize;
+  v_FragColor = a_FragColor;
+}
+''';
+  String get fShaderSource => '''
+precision highp float;
+varying vec4 v_FragColor;
+void main() {
+  gl_FragColor = v_FragColor;
+}
+''';
 }
