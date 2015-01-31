@@ -35,7 +35,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
             gameState.score += 10.0;
             gameState.trianglesKilled += 1;
             var m = new Message(messages[random.nextInt(messages.length)]);
-            new Tween.to(m, Alpha.ALPHA, 2500.0)
+            new Tween.to(m, Alpha.ALPHA, 2.5)
                 ..targetValues = [0.0]
                 ..easing = TweenEquations.easeInCubic
                 ..start(tweenManager);
@@ -46,7 +46,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
             for (int i = 0; i < t.size * t.size / 2; i++) {
               var distanceToCenter = t.size* random.nextDouble();
               var angleToCenter = 2 * PI * random.nextDouble();
-              var lifetime = 500.0 + random.nextInt(1000);
+              var lifetime = 0.5 + random.nextDouble();
               var particle = new Particle();
               easeParticle(particle, lifetime);
 
@@ -56,8 +56,8 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
                       new Color(fillStyle: '#00${randomBrightColorFragment()}${randomBrightColorFragment()}'),
                       new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
                       new Velocity(
-                          cos(angleToCenter) * distanceToCenter / t.size / 2,
-                          sin(angleToCenter) * distanceToCenter / t.size / 2),
+                          cos(angleToCenter) * distanceToCenter / t.size * 500,
+                          sin(angleToCenter) * distanceToCenter / t.size * 500),
                       new Lifetime(lifetime)]);
             }
 
@@ -181,7 +181,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
     for (int i = 0; i < PI * c.radius * c.radius; i++) {
       var distanceToCenter = c.radius * random.nextDouble();
       var angleToCenter = 2 * PI * random.nextDouble();
-      var lifetime = 500.0 + random.nextInt(1000);
+      var lifetime = 0.5 + random.nextDouble();
       var particle = new Particle();
       easeParticle(particle, lifetime);
 
@@ -191,8 +191,8 @@ class CircleDestructionSystem extends EntityProcessingSystem {
               new Color(fillStyle: '#${randomBrightColorFragment()}0000'),
               new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
               new Velocity(
-                  cos(angleToCenter) * distanceToCenter / c.radius / 2,
-                  sin(angleToCenter) * distanceToCenter / c.radius / 2),
+                  cos(angleToCenter) * distanceToCenter / c.radius * 500,
+                  sin(angleToCenter) * distanceToCenter / c.radius * 500),
               new Lifetime(lifetime)]);
     }
 
@@ -209,7 +209,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       var entities = gm.getEntities(circleGroup);
       entities.forEach((entity) {
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Alpha.ALPHA, 2500.0)
+        new Tween.to(m, Alpha.ALPHA, 2.5)
             ..targetValues = [0.0]
             ..easing = TweenEquations.easeInCubic
             ..start(tweenManager);
@@ -226,7 +226,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
 class MovementSystem extends EntityProcessingSystem {
   Mapper<Position> pm;
   Mapper<Velocity> vm;
-  static const double pretendMovementY = 0.1;
+  static const double pretendMovementY = 100.0;
 
   MovementSystem() : super(Aspect.getAspectForAllOf([Position, Velocity]));
 
@@ -274,7 +274,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
     var t = tm[entity];
 
     for (int i = 0; i < random.nextInt(5); i++) {
-      var lifetime = 500.0 + random.nextInt(100);
+      var lifetime = 0.5 + 0.1 * random.nextDouble();
       var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
       var particle = new Particle();
       easeParticle(particle, lifetime);
@@ -283,7 +283,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
           [
               particle,
               new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance),
-              new Velocity(-cos(emitAngle) * 0.2 * random.nextDouble(), -sin(emitAngle) * 0.2 * random.nextDouble()),
+              new Velocity(-cos(emitAngle) * 100 * random.nextDouble(), -sin(emitAngle) * 100 * random.nextDouble()),
               new Color(
                   fillStyle:
                       '#${(200 + random.nextInt(50)).toInt().toRadixString(16)}${(50 + random.nextInt(200)).toInt().toRadixString(16)}00'),
@@ -332,7 +332,7 @@ class FriendCollectingSystem extends EntitySystem {
       if (distance < combinedSize) {
         gm.add(entity, circleGroup);
         var m = new Message(messages[random.nextInt(messages.length)]);
-        new Tween.to(m, Alpha.ALPHA, 2500.0)
+        new Tween.to(m, Alpha.ALPHA, 2.5)
             ..targetValues = [0.0]
             ..easing = TweenEquations.easeInCubic
             ..start(tweenManager);
@@ -400,9 +400,9 @@ class FriendMovementSystem extends EntitySystem {
         a.value = 0.0;
       } else {
         if (gameState.rageMode) {
-          a.value = sqrt(missingDistance) / 10000;
+          a.value = sqrt(missingDistance) / 0.01;
         } else {
-          a.value = sqrt(missingDistance) / 100000;
+          a.value = sqrt(missingDistance) / 0.1;
         }
         o.value = angle;
       }
@@ -453,7 +453,7 @@ class AttentionDelayDecreasingSystem extends EntityProcessingSystem {
     a.delay -= world.delta;
     if (a.delay <= 0.0) {
       var m = new Message(messages[random.nextInt(messages.length)]);
-      new Tween.to(m, Alpha.ALPHA, 2500.0)
+      new Tween.to(m, Alpha.ALPHA, 2.5)
           ..targetValues = [0.0]
           ..easing = TweenEquations.easeInCubic
           ..start(tweenManager);

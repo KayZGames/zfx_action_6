@@ -28,13 +28,13 @@ class PainAnalysingSystem extends VoidEntitySystem {
       }
       gameState.notInPain = 0.0;
       var before = gameState.inPain ~/ 100.0;
-      gameState.inPain += world.delta;
+      gameState.inPain += world.delta * 1000;
       var after = gameState.inPain ~/ 100.0;
       if (before < after) {
         gameState.painometer += 0.3;
       }
     } else {
-      gameState.notInPain += world.delta;
+      gameState.notInPain += world.delta * 1000;
     }
     if (gameState.notInPain > 300.0) {
       hhs.updateScreamTime();

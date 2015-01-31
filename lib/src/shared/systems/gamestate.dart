@@ -5,7 +5,7 @@ class GameStateUpdateingSystem extends VoidEntitySystem {
 
   @override
   void processSystem() {
-    gameState.score += (world.delta / 1000) * gameState.friendsAlive;
+    gameState.score += world.delta * gameState.friendsAlive;
   }
 
   @override
