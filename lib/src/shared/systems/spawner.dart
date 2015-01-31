@@ -124,8 +124,8 @@ class BackgroundDotSpawner extends VoidEntitySystem {
         [
             new Position(random.nextDouble() * 800.0, 0.0),
             new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
-            new Color(fillStyle: randomBrightColor()),
-            new Background(1 + random.nextInt(3)),
+            new Color(red: 0.6 + random.nextDouble() * 0.4, green: 0.6 + random.nextDouble() * 0.4, blue: 0.6 + random.nextDouble() * 0.4),
+            new Background(1 + random.nextDouble() * 3),
             new Lifetime(10.0)]);
   }
 

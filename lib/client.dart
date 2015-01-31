@@ -13,7 +13,7 @@ import 'package:lawndart/lawndart.dart';
 part 'src/client/systems/highscore.dart';
 part 'src/client/systems/audio.dart';
 part 'src/client/systems/events.dart';
-part 'src/client/systems/rendering.dart';
+//part 'src/client/systems/rendering.dart';
 part 'src/client/systems/webgl.dart';
 
 class Game extends GameBase {
@@ -60,11 +60,11 @@ class Game extends GameBase {
 
         new TweeningSystem(),
 
-        new CanvasCleaningSystem(ctx),
+//        new CanvasCleaningSystem(ctx),
 
 //        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
 //        new RageModeRenderer(ctx),
-//        new BackgroundDotRenderingSystem(ctx),
+        new BackgroundDotRenderingSystem(ctx),
 //        new ParticleRenderingSystem(ctx),
 //        new TriangleRenderingSystem(ctx),
 //        new CircleRenderingSystem(ctx),
