@@ -146,7 +146,7 @@ class FriendSpawner extends VoidEntitySystem {
             new Orientation(0.0),
             new Circle(5.0),
             new Velocity(0.0, 0.0),
-            new Color(fillStyle: 'white'),
+            new Color(red: 1.0, green: 1.0, blue: 1.0),
             new Collectible(),
             new AttentionWhore(1.0),
             new Heartbeat()]);

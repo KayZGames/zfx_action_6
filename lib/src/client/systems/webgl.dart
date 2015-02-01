@@ -297,3 +297,95 @@ void main() {
 }
 ''';
 }
+
+class CircleRenderingSystem extends WebGlRenderingSystem {
+  Mapper<Position> pm;
+  Mapper<Circle> circleMapper;
+  Mapper<Color> colorMapper;
+  Mapper<Heartbeat> hbMapper;
+
+  Float32List positions;
+  Float32List colors;
+  Float32List sizes;
+
+  CircleRenderingSystem(RenderingContext gl)
+      : super(gl, Aspect.getAspectForAllOf([Position, Circle, Color, Heartbeat]));
+
+  @override
+  void processEntity(int index, Entity entity) {
+    var position = pm[entity];
+    var circle = circleMapper[entity];
+    var color = colorMapper[entity];
+    var hb = hbMapper[entity];
+
+    var beat = 60000 / hb.frequency;
+    var mod = 0.01;
+    var red = color.red;
+    var green = color.green;
+    var blue = color.blue;
+    if (gameState.rageMode) {
+      // hacky hacky hack
+      if (blue != 1.0) {
+        beat = 250;
+        mod = 0.025;
+        red = 138 / 255;
+        green = 7 / 255;
+        blue = 7 / 255;
+      }
+    }
+    var heartbeatMod = world.time % beat;
+    var radius = circle.radius;
+    if (heartbeatMod > 0.8 * beat) {
+      radius = radius + (1000 * heartbeatMod / beat - 800) * mod;
+    }
+
+    sizes[index] = radius * 2;
+
+    positions[index * 2] = position.x;
+    positions[index * 2 + 1] = position.y;
+
+    colors[index * 4] = red;
+    colors[index * 4 + 1] = green;
+    colors[index * 4 + 2] = blue;
+    colors[index * 4 + 3] = color.alpha;
+  }
+
+
+  @override
+  void render(int length) {
+    buffer('a_Size', sizes, 1);
+    buffer('a_Position', positions, 2);
+    buffer('a_Color', colors, 4);
+
+    gl.drawArrays(RenderingContext.POINTS, 0, length);
+  }
+
+  @override
+  void updateLength(int length) {
+    sizes = new Float32List(length);
+    positions = new Float32List(length * 2);
+    colors = new Float32List(length * 4);
+  }
+
+  @override
+  String get vShaderSource => '''
+attribute float a_Size;
+attribute vec2 a_Position;
+attribute vec4 a_Color;
+varying vec4 v_Color;
+void main() {
+  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_PointSize = a_Size;
+  v_Color = a_Color;
+}
+''';
+
+  @override
+  String get fShaderSource => '''
+precision highp float;
+varying vec4 v_Color;
+void main() {
+  gl_FragColor = v_Color;
+}
+''';
+}

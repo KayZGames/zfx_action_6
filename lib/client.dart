@@ -34,7 +34,7 @@ class Game extends GameBase {
         [
             new Circle(20.0),
             new Position(400.0, 300.0),
-            new Color(fillStyle: '#ffffff'),
+            new Color(red: 1.0, green: 1.0, blue: 1.0),
             new Heartbeat(),
             new Health(100.0, 100.0)]);
     tm.register(e, playerTag);
@@ -67,7 +67,7 @@ class Game extends GameBase {
         new BackgroundDotRenderingSystem(ctx),
         new ParticleRenderingSystem(ctx),
         new TriangleRenderingSystem(ctx),
-//        new CircleRenderingSystem(ctx),
+        new CircleRenderingSystem(ctx),
 //        new MessageRenderingSystem(ctx),
 //        new GameOverRenderingSystem(ctx),
 //        new GameStateRenderingSystem(ctx),

@@ -53,7 +53,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
               world.createAndAddEntity(
                   [
                       particle,
-                      new Color(green: 0.6 + 0.4 * random.nextDouble, blue: 0.6 + 0.4 * random.nextDouble()),
+                      new Color(green: 0.6 + 0.4 * random.nextDouble(), blue: 0.6 + 0.4 * random.nextDouble()),
                       new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
                       new Velocity(
                           cos(angleToCenter) * distanceToCenter / t.size * 500,
@@ -425,10 +425,9 @@ class HealthColoringSystem extends EntityProcessingSystem {
 
     var ratio = h.value / h.maxHealth;
 
-    var red = ((1 - ratio * ratio) * 100).toInt();
-    var green = (ratio * ratio * 255).toInt();
-
-    c.fillStyle = '#${red.toRadixString(16).padLeft(2, '0')}${green.toRadixString(16).padLeft(2, '0')}00';
+    c.red = (1 - ratio * ratio) / 2.5;
+    c.green = ratio * ratio;
+    c.blue = 0.0;
   }
 }
 

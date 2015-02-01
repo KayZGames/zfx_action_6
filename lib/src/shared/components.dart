@@ -76,13 +76,11 @@ class Orientation extends Component implements Tweenable {
 }
 
 class Color extends Component {
-  String strokeStyle;
-  String fillStyle;
   double red;
   double green;
   double blue;
   double alpha;
-  Color({this.strokeStyle: 'black', this.fillStyle: 'black', this.red: 0.0, this.green: 0.0, this.blue: 0.0, this.alpha: 1.0});
+  Color({this.red: 0.0, this.green: 0.0, this.blue: 0.0, this.alpha: 1.0});
 }
 
 class Health extends Component {
