@@ -51,12 +51,13 @@ abstract class WebGlRenderingSystem extends EntitySystem {
     gl.useProgram(program);
   }
 
-  void buffer(int index, Float32List items, int itemSize) {
-    var vertexBuffer = gl.createBuffer();
+  Buffer buffer(int index, Float32List items, int itemSize, Buffer buffer) {
+    var vertexBuffer = null == buffer ? gl.createBuffer() : buffer;
     gl.bindBuffer(RenderingContext.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(RenderingContext.ARRAY_BUFFER, items, RenderingContext.STREAM_DRAW);
     gl.vertexAttribPointer(index, itemSize, RenderingContext.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(index);
+    return vertexBuffer;
   }
 
   @override
@@ -70,6 +71,14 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   Mapper<Position> pm;
   Mapper<Color> cm;
   Mapper<Background> bm;
+  Float32List positions;
+  Float32List colors;
+  Float32List sizes;
+  Buffer positionsBuffer;
+  Buffer colorsBuffer;
+  Buffer sizesBuffer;
+  int maxLength = 0;
+
   BackgroundDotRenderingSystem(RenderingContext gl)
       : super(gl, Aspect.getAspectForAllOf([Background, Position, Color]));
 
@@ -80,9 +89,12 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
       var a_Position = gl.getAttribLocation(program, 'a_Position');
       var a_PointSize = gl.getAttribLocation(program, 'a_PointSize');
       var a_FragColor = gl.getAttribLocation(program, 'a_FragColor');
-      var positions = new Float32List(length * 2);
-      var sizes = new Float32List(length);
-      var colors = new Float32List(length * 4);
+      if (length > maxLength) {
+        positions = new Float32List(length * 2);
+        colors = new Float32List(length * 4);
+        sizes = new Float32List(length);
+        maxLength = length;
+      }
       var index = 0;
       entities.forEach((entity) {
         var p = pm[entity];
@@ -99,9 +111,9 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
 
         index++;
       });
-      buffer(a_Position, positions, 2);
-      buffer(a_PointSize, sizes, 1);
-      buffer(a_FragColor, colors, 4);
+      positionsBuffer = buffer(a_Position, positions, 2, positionsBuffer);
+      sizesBuffer = buffer(a_PointSize, sizes, 1, sizesBuffer);
+      colorsBuffer = buffer(a_FragColor, colors, 4, colorsBuffer);
 
       gl.drawArrays(RenderingContext.POINTS, 0, length);
     }
@@ -131,6 +143,11 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
   Mapper<Color> cm;
   Mapper<Position> pm;
   Mapper<Particle> particleMapper;
+  Float32List positions;
+  Float32List colors;
+  Buffer positionsBuffer;
+  Buffer colorsBuffer;
+  int maxLength = 0;
 
   ParticleRenderingSystem(RenderingContext gl) : super(gl, Aspect.getAspectForAllOf([Particle, Color, Position]));
 
@@ -141,8 +158,11 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
       var a_Position = gl.getAttribLocation(program, 'a_Position');
       var a_Color = gl.getAttribLocation(program, 'a_Color');
 
-      var positions = new Float32List(length * 2);
-      var colors = new Float32List(length * 4);
+      if (length > maxLength) {
+        positions = new Float32List(length * 2);
+        colors = new Float32List(length * 4);
+        maxLength = length;
+      }
       var index = 0;
       entities.forEach((entity) {
         var p = pm[entity];
@@ -158,8 +178,9 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
         index++;
       });
-      buffer(a_Position, positions, 2);
-      buffer(a_Color, colors, 4);
+
+      positionsBuffer = buffer(a_Position, positions, 2, positionsBuffer);
+      colorsBuffer = buffer(a_Color, colors, 4, colorsBuffer);
 
       gl.drawArrays(RenderingContext.POINTS, 0, length);
     }

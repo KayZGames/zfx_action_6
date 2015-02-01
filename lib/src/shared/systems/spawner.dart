@@ -110,8 +110,6 @@ class TriangleSpawningSystem extends VoidEntitySystem {
 
 class BackgroundDotSpawner extends VoidEntitySystem {
 
-  var spawnTimer = 0.0;
-
   @override
   void processSystem() {
     var minSpeed = 0.0;
@@ -122,7 +120,7 @@ class BackgroundDotSpawner extends VoidEntitySystem {
     }
     world.createAndAddEntity(
         [
-            new Position(random.nextDouble() * 800.0, 0.0),
+            new Position(random.nextDouble() * 800.0, -5.0),
             new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
             new Color(red: 0.6 + random.nextDouble() * 0.4, green: 0.6 + random.nextDouble() * 0.4, blue: 0.6 + random.nextDouble() * 0.4),
             new Background(1 + random.nextDouble() * 3),
@@ -130,14 +128,7 @@ class BackgroundDotSpawner extends VoidEntitySystem {
   }
 
   @override
-  bool checkProcessing() {
-    if (spawnTimer <= 0) {
-      spawnTimer = 0.03 + random.nextDouble() * 0.08;
-      return true;
-    }
-    spawnTimer -= world.delta;
-    return false;
-  }
+  bool checkProcessing() => true;
 }
 
 class FriendSpawner extends VoidEntitySystem {
