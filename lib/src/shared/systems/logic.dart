@@ -53,7 +53,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
               world.createAndAddEntity(
                   [
                       particle,
-                      new Color(fillStyle: '#00${randomBrightColorFragment()}${randomBrightColorFragment()}'),
+                      new Color(green: 0.6 + 0.4 * random.nextDouble, blue: 0.6 + 0.4 * random.nextDouble()),
                       new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
                       new Velocity(
                           cos(angleToCenter) * distanceToCenter / t.size * 500,
@@ -188,7 +188,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
       world.createAndAddEntity(
           [
               particle,
-              new Color(fillStyle: '#${randomBrightColorFragment()}0000'),
+              new Color(red: 0.6 + 0.4 * random.nextDouble()),
               new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
               new Velocity(
                   cos(angleToCenter) * distanceToCenter / c.radius * 500,
@@ -284,9 +284,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
               particle,
               new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance),
               new Velocity(-cos(emitAngle) * 100 * random.nextDouble(), -sin(emitAngle) * 100 * random.nextDouble()),
-              new Color(
-                  fillStyle:
-                      '#${(200 + random.nextInt(50)).toInt().toRadixString(16)}${(50 + random.nextInt(200)).toInt().toRadixString(16)}00'),
+              new Color(red: 0.8 + 0.2 *random.nextDouble(), green: 0.2 + 0.8 * random.nextDouble()),
               new Lifetime(lifetime)]);
     }
   }

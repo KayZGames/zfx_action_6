@@ -65,7 +65,7 @@ class Game extends GameBase {
 //        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
 //        new RageModeRenderer(ctx),
         new BackgroundDotRenderingSystem(ctx),
-//        new ParticleRenderingSystem(ctx),
+        new ParticleRenderingSystem(ctx),
 //        new TriangleRenderingSystem(ctx),
 //        new CircleRenderingSystem(ctx),
 //        new MessageRenderingSystem(ctx),

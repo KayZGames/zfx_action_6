@@ -109,8 +109,8 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
 
   String get vShaderSource => '''
 attribute vec2 a_Position;
-attribute vec4 a_FragColor;
 attribute float a_PointSize;
+attribute vec4 a_FragColor;
 varying vec4 v_FragColor;
 void main() {
   gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
@@ -125,4 +125,66 @@ void main() {
   gl_FragColor = v_FragColor;
 }
 ''';
+}
+
+class ParticleRenderingSystem extends WebGlRenderingSystem {
+  Mapper<Color> cm;
+  Mapper<Position> pm;
+  Mapper<Particle> particleMapper;
+
+  ParticleRenderingSystem(RenderingContext gl) : super(gl, Aspect.getAspectForAllOf([Particle, Color, Position]));
+
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    var length = entities.length;
+    if (length > 0) {
+      var a_Position = gl.getAttribLocation(program, 'a_Position');
+      var a_Color = gl.getAttribLocation(program, 'a_Color');
+
+      var positions = new Float32List(length * 2);
+      var colors = new Float32List(length * 4);
+      var index = 0;
+      entities.forEach((entity) {
+        var p = pm[entity];
+        var c = cm[entity];
+        var particle = particleMapper[entity];
+
+        positions[index * 2] = p.x;
+        positions[index * 2 + 1] = p.y;
+        colors[index * 4] = c.red;
+        colors[index * 4 + 1] = c.green;
+        colors[index * 4 + 2] = c.blue;
+        colors[index * 4 + 3] = c.alpha;
+
+        index++;
+      });
+      buffer(a_Position, positions, 2);
+      buffer(a_Color, colors, 4);
+
+      gl.drawArrays(RenderingContext.POINTS, 0, length);
+    }
+  }
+
+
+  @override
+  String get vShaderSource => '''
+attribute vec2 a_Position;
+attribute vec4 a_Color;
+varying vec4 v_Color;
+void main() {
+  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_PointSize = 1.0;
+  v_Color = a_Color;
+}
+''';
+
+  @override
+  String get fShaderSource => '''
+precision highp float;
+varying vec4 v_Color;
+void main() {
+  gl_FragColor = v_Color;
+}
+''';
+
 }
