@@ -17,12 +17,20 @@ abstract class WebGlRenderingSystem extends EntitySystem {
   RenderingContext gl;
   Program program;
   bool success = true;
+  Map<String, Buffer> buffers = <String, Buffer>{};
+  int maxLength = 0;
+
   WebGlRenderingSystem(this.gl, Aspect aspect) : super(aspect);
+
   @override
   void initialize() {
-    var vShader = createShader(RenderingContext.VERTEX_SHADER, vShaderSource);
-    var fShader = createShader(RenderingContext.FRAGMENT_SHADER, fShaderSource);
+    var vShader = _createShader(RenderingContext.VERTEX_SHADER, vShaderSource);
+    var fShader = _createShader(RenderingContext.FRAGMENT_SHADER, fShaderSource);
 
+    _createProgram(vShader, fShader);
+  }
+
+  void _createProgram(Shader vShader, Shader fShader) {
     program = gl.createProgram();
     gl.attachShader(program, vShader);
     gl.attachShader(program, fShader);
@@ -34,7 +42,7 @@ abstract class WebGlRenderingSystem extends EntitySystem {
     }
   }
 
-  createShader(int type, String source) {
+  Shader _createShader(int type, String source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
@@ -51,18 +59,41 @@ abstract class WebGlRenderingSystem extends EntitySystem {
     gl.useProgram(program);
   }
 
-  Buffer buffer(int index, Float32List items, int itemSize, Buffer buffer) {
-    var vertexBuffer = null == buffer ? gl.createBuffer() : buffer;
-    gl.bindBuffer(RenderingContext.ARRAY_BUFFER, vertexBuffer);
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    var length = entities.length;
+    if (length > 0) {
+      if (length > maxLength) {
+        updateLength(length);
+        maxLength = length;
+      }
+      var index = 0;
+      entities.forEach((entity) {
+        processEntity(index++, entity);
+      });
+      render(length);
+    }
+  }
+
+  void buffer(String attribute, Float32List items, int itemSize) {
+    var buffer = buffers[attribute];
+    if (null == buffer) {
+      buffer = gl.createBuffer();
+      buffers[attribute] = buffer;
+    }
+    var attribLocation = gl.getAttribLocation(program, attribute);
+    gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
     gl.bufferData(RenderingContext.ARRAY_BUFFER, items, RenderingContext.STREAM_DRAW);
-    gl.vertexAttribPointer(index, itemSize, RenderingContext.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(index);
-    return vertexBuffer;
+    gl.vertexAttribPointer(attribLocation, itemSize, RenderingContext.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(attribLocation);
   }
 
   @override
   bool checkProcessing() => success;
 
+  void updateLength(int length);
+  void processEntity(int index, Entity entity);
+  void render(int length);
   String get vShaderSource;
   String get fShaderSource;
 }
@@ -74,49 +105,39 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   Float32List positions;
   Float32List colors;
   Float32List sizes;
-  Buffer positionsBuffer;
-  Buffer colorsBuffer;
-  Buffer sizesBuffer;
-  int maxLength = 0;
 
   BackgroundDotRenderingSystem(RenderingContext gl)
       : super(gl, Aspect.getAspectForAllOf([Background, Position, Color]));
 
   @override
-  void processEntities(Iterable<Entity> entities) {
-    var length = entities.length;
-    if (length > 0) {
-      var a_Position = gl.getAttribLocation(program, 'a_Position');
-      var a_PointSize = gl.getAttribLocation(program, 'a_PointSize');
-      var a_FragColor = gl.getAttribLocation(program, 'a_FragColor');
-      if (length > maxLength) {
-        positions = new Float32List(length * 2);
-        colors = new Float32List(length * 4);
-        sizes = new Float32List(length);
-        maxLength = length;
-      }
-      var index = 0;
-      entities.forEach((entity) {
-        var p = pm[entity];
-        var c = cm[entity];
-        var b = bm[entity];
+  void processEntity(int index, Entity entity) {
+    var p = pm[entity];
+    var c = cm[entity];
+    var b = bm[entity];
 
-        positions[index * 2] = p.x;
-        positions[index * 2 + 1] = p.y;
-        sizes[index] = b.size;
-        colors[index * 4] = c.red;
-        colors[index * 4 + 1] = c.green;
-        colors[index * 4 + 2] = c.blue;
-        colors[index * 4 + 3] = c.alpha;
+    positions[index * 2] = p.x;
+    positions[index * 2 + 1] = p.y;
+    sizes[index] = b.size;
+    colors[index * 4] = c.red;
+    colors[index * 4 + 1] = c.green;
+    colors[index * 4 + 2] = c.blue;
+    colors[index * 4 + 3] = c.alpha;
+  }
 
-        index++;
-      });
-      positionsBuffer = buffer(a_Position, positions, 2, positionsBuffer);
-      sizesBuffer = buffer(a_PointSize, sizes, 1, sizesBuffer);
-      colorsBuffer = buffer(a_FragColor, colors, 4, colorsBuffer);
+  @override
+  void render(int length) {
+    buffer('a_Position', positions, 2);
+    buffer('a_PointSize', sizes, 1);
+    buffer('a_FragColor', colors, 4);
 
-      gl.drawArrays(RenderingContext.POINTS, 0, length);
-    }
+    gl.drawArrays(RenderingContext.POINTS, 0, length);
+  }
+
+  @override
+  void updateLength(int length) {
+    positions = new Float32List(length * 2);
+    colors = new Float32List(length * 4);
+    sizes = new Float32List(length);
   }
 
   String get vShaderSource => '''
@@ -145,47 +166,37 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
   Mapper<Particle> particleMapper;
   Float32List positions;
   Float32List colors;
-  Buffer positionsBuffer;
-  Buffer colorsBuffer;
   int maxLength = 0;
 
   ParticleRenderingSystem(RenderingContext gl) : super(gl, Aspect.getAspectForAllOf([Particle, Color, Position]));
 
   @override
-  void processEntities(Iterable<Entity> entities) {
-    var length = entities.length;
-    if (length > 0) {
-      var a_Position = gl.getAttribLocation(program, 'a_Position');
-      var a_Color = gl.getAttribLocation(program, 'a_Color');
+  void processEntity(int index, Entity entity) {
+    var p = pm[entity];
+    var c = cm[entity];
+    var particle = particleMapper[entity];
 
-      if (length > maxLength) {
-        positions = new Float32List(length * 2);
-        colors = new Float32List(length * 4);
-        maxLength = length;
-      }
-      var index = 0;
-      entities.forEach((entity) {
-        var p = pm[entity];
-        var c = cm[entity];
-        var particle = particleMapper[entity];
-
-        positions[index * 2] = p.x;
-        positions[index * 2 + 1] = p.y;
-        colors[index * 4] = c.red;
-        colors[index * 4 + 1] = c.green;
-        colors[index * 4 + 2] = c.blue;
-        colors[index * 4 + 3] = c.alpha;
-
-        index++;
-      });
-
-      positionsBuffer = buffer(a_Position, positions, 2, positionsBuffer);
-      colorsBuffer = buffer(a_Color, colors, 4, colorsBuffer);
-
-      gl.drawArrays(RenderingContext.POINTS, 0, length);
-    }
+    positions[index * 2] = p.x;
+    positions[index * 2 + 1] = p.y;
+    colors[index * 4] = c.red;
+    colors[index * 4 + 1] = c.green;
+    colors[index * 4 + 2] = c.blue;
+    colors[index * 4 + 3] = c.alpha;
   }
 
+  @override
+  void render(int length) {
+    buffer('a_Position', positions, 2);
+    buffer('a_Color', colors, 4);
+
+    gl.drawArrays(RenderingContext.POINTS, 0, length);
+  }
+
+  @override
+  void updateLength(int length) {
+    positions = new Float32List(length * 2);
+    colors = new Float32List(length * 4);
+  }
 
   @override
   String get vShaderSource => '''
@@ -207,5 +218,7 @@ void main() {
   gl_FragColor = v_Color;
 }
 ''';
+
+
 
 }
