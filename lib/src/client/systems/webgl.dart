@@ -95,6 +95,7 @@ abstract class WebGlRenderingSystem extends EntitySystem {
 }
 
 class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
+  TagManager tm;
   Mapper<Position> pm;
   Mapper<Color> cm;
   Mapper<Background> bm;
@@ -126,6 +127,10 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
     buffer('a_PointSize', sizes, 1);
     buffer('a_FragColor', colors, 4);
 
+    var modelMatrix = createModelMatrix(tm, pm);
+    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
+    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+
     gl.drawArrays(RenderingContext.POINTS, 0, length);
   }
 
@@ -137,12 +142,13 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   }
 
   String get vShaderSource => '''
+uniform mat4 uModelMatrix;
 attribute vec2 a_Position;
 attribute float a_PointSize;
 attribute vec4 a_FragColor;
 varying vec4 v_FragColor;
 void main() {
-  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
   gl_PointSize = a_PointSize;
   v_FragColor = a_FragColor;
 }
@@ -157,6 +163,7 @@ void main() {
 }
 
 class ParticleRenderingSystem extends WebGlRenderingSystem {
+  TagManager tm;
   Mapper<Color> cm;
   Mapper<Position> pm;
   Mapper<Particle> particleMapper;
@@ -185,6 +192,10 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
     buffer('a_Position', positions, 2);
     buffer('a_Color', colors, 4);
 
+    var modelMatrix = createModelMatrix(tm, pm);
+    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
+    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+
     gl.drawArrays(RenderingContext.POINTS, 0, length);
   }
 
@@ -196,11 +207,12 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   String get vShaderSource => '''
+uniform mat4 uModelMatrix;
 attribute vec2 a_Position;
 attribute vec4 a_Color;
 varying vec4 v_Color;
 void main() {
-  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
   gl_PointSize = 1.0;
   v_Color = a_Color;
 }
@@ -219,6 +231,7 @@ void main() {
 
 
 class TriangleRenderingSystem extends WebGlRenderingSystem {
+  TagManager tagManager;
   Mapper<Position> pm;
   Mapper<Triangle> tm;
   Mapper<Color> cm;
@@ -268,6 +281,10 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
     buffer('a_Position', positions, 2);
     buffer('a_Color', colors, 4);
 
+    var modelMatrix = createModelMatrix(tagManager, pm);
+    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
+    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+
     gl.drawArrays(RenderingContext.TRIANGLES, 0, length * 3);
   }
 
@@ -279,11 +296,12 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   String get vShaderSource => '''
+uniform mat4 uModelMatrix;
 attribute vec2 a_Position;
 attribute vec4 a_Color;
 varying vec4 v_Color;
 void main() {
-  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
   v_Color = a_Color;
 }
 ''';
@@ -299,6 +317,7 @@ void main() {
 }
 
 class CircleRenderingSystem extends WebGlRenderingSystem {
+  TagManager tm;
   Mapper<Position> pm;
   Mapper<Circle> circleMapper;
   Mapper<Color> colorMapper;
@@ -357,6 +376,10 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
     buffer('a_Position', positions, 2);
     buffer('a_Color', colors, 4);
 
+    var modelMatrix = createModelMatrix(tm, pm);
+    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
+    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+
     gl.drawArrays(RenderingContext.POINTS, 0, length);
   }
 
@@ -369,12 +392,13 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   String get vShaderSource => '''
+uniform mat4 uModelMatrix;
 attribute float a_Size;
 attribute vec2 a_Position;
 attribute vec4 a_Color;
 varying vec4 v_Color;
 void main() {
-  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
   gl_PointSize = a_Size;
   v_Color = a_Color;
 }
@@ -388,4 +412,14 @@ void main() {
   gl_FragColor = v_Color;
 }
 ''';
+}
+
+Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
+  var player = tm.getEntity(playerTag);
+  var angle = 0.0;
+  if (null != player) {
+    angle = PI / 8 * (pm[player].x / 400.0 - 1);
+  }
+  var modelMatrix = new Matrix4.rotationY(angle);
+  return modelMatrix;
 }
