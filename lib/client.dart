@@ -66,7 +66,7 @@ class Game extends GameBase {
 //        new RageModeRenderer(ctx),
         new BackgroundDotRenderingSystem(ctx),
         new ParticleRenderingSystem(ctx),
-//        new TriangleRenderingSystem(ctx),
+        new TriangleRenderingSystem(ctx),
 //        new CircleRenderingSystem(ctx),
 //        new MessageRenderingSystem(ctx),
 //        new GameOverRenderingSystem(ctx),

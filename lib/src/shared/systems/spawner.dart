@@ -23,7 +23,8 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var orientation = random.nextDouble() * PI;
     var velocity = 500 + random.nextDouble() * 500;
     var size = 10.0 + random.nextDouble() * 15.0;
-    var strokeStyle = generateTriangleColor();
+    var green = 0.6 + 0.4 * random.nextDouble();
+    var blue = 0.6 + 0.4 * random.nextDouble();
     world.createAndAddEntity(
         [
             new Triangle(size),
@@ -33,7 +34,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
             new Lifetime(4.0),
             new Thruster(size * sin(PI / 4)),
             new Acceleration(),
-            new Color(strokeStyle: strokeStyle)]);
+            new Color(green: green, blue: blue)]);
   }
 
   void spawnHorizontalMovement() {
@@ -42,7 +43,8 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var size = 10.0 + random.nextDouble() * 15.0;
     var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 100 * random.nextDouble();
-    var strokeStyle = generateTriangleColor();
+    var green = 0.6 + 0.4 * random.nextDouble();
+    var blue = 0.6 + 0.4 * random.nextDouble();
 
     for (int i = 0; i < random.nextInt(6); i++) {
       var orientation = random.nextInt(2) * PI;
@@ -62,7 +64,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Lifetime(4.0),
               new Thruster(size * sin(PI / 4)),
               acceleration,
-              new Color(strokeStyle: strokeStyle)]);
+              new Color(green: green, blue: blue)]);
     }
   }
   void spawnVerticalMovement() {
@@ -71,7 +73,8 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     var size = 10.0 + random.nextDouble() * 15.0;
     var distance = 2.0 * size + random.nextDouble() * size;
     var targetAcceleration = 100.0 * random.nextDouble();
-    var strokeStyle = generateTriangleColor();
+    var green = 0.6 + 0.4 * random.nextDouble();
+    var blue = 0.6 + 0.4 * random.nextDouble();
 
     for (int i = 0; i < random.nextInt(6); i++) {
       var orientation = PI / 2;
@@ -91,11 +94,9 @@ class TriangleSpawningSystem extends VoidEntitySystem {
               new Lifetime(4.0),
               new Thruster(size * sin(PI / 4)),
               acceleration,
-              new Color(strokeStyle: strokeStyle)]);
+              new Color(green: green, blue: blue)]);
     }
   }
-
-  String generateTriangleColor() => '#00${randomBrightColorFragment()}${randomBrightColorFragment()}';
 
   @override
   bool checkProcessing() {
@@ -122,7 +123,10 @@ class BackgroundDotSpawner extends VoidEntitySystem {
         [
             new Position(random.nextDouble() * 800.0, -5.0),
             new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
-            new Color(red: 0.6 + random.nextDouble() * 0.4, green: 0.6 + random.nextDouble() * 0.4, blue: 0.6 + random.nextDouble() * 0.4),
+            new Color(
+                red: 0.6 + random.nextDouble() * 0.4,
+                green: 0.6 + random.nextDouble() * 0.4,
+                blue: 0.6 + random.nextDouble() * 0.4),
             new Background(1 + random.nextDouble() * 3),
             new Lifetime(10.0)]);
   }

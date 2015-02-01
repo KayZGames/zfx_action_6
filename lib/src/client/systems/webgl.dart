@@ -55,14 +55,10 @@ abstract class WebGlRenderingSystem extends EntitySystem {
   }
 
   @override
-  void begin() {
-    gl.useProgram(program);
-  }
-
-  @override
   void processEntities(Iterable<Entity> entities) {
     var length = entities.length;
     if (length > 0) {
+      gl.useProgram(program);
       if (length > maxLength) {
         updateLength(length);
         maxLength = length;
@@ -219,6 +215,85 @@ void main() {
 }
 ''';
 
+}
 
 
+class TriangleRenderingSystem extends WebGlRenderingSystem {
+  Mapper<Position> pm;
+  Mapper<Triangle> tm;
+  Mapper<Color> cm;
+  Mapper<Orientation> om;
+  double beatMod = 1.0;
+  Float32List positions;
+  Float32List colors;
+
+  TriangleRenderingSystem(RenderingContext gl)
+      : super(gl, Aspect.getAspectForAllOf([Position, Triangle, Color, Orientation]));
+
+  @override
+  void begin() {
+    var mod = sin(world.time / 0.14);
+    beatMod = 1 + (mod * mod * mod * mod) / 2;
+  }
+
+  @override
+  void processEntity(int index, Entity entity) {
+    var p = pm[entity];
+    var t = tm[entity];
+    var c = cm[entity];
+    var o = om[entity];
+
+    var angle = o.value;
+
+    var size = t.size * beatMod;
+
+    for (int vertex = 0; vertex < 3; vertex++) {
+      var posIndex = index * 6 + vertex * 2;
+      var colorIndex = index * 12 + vertex * 4;
+      var vertexAngle = angle + PI * 2 * vertex / 3;
+
+      positions[posIndex] = p.x + cos(vertexAngle) * size;
+      positions[posIndex + 1] = p.y + sin(vertexAngle) * size;
+
+      colors[colorIndex] = c.red;
+      colors[colorIndex + 1] = c.green;
+      colors[colorIndex + 2] = c.blue;
+      colors[colorIndex + 3] = c.alpha;
+    }
+  }
+
+
+  @override
+  void render(int length) {
+    buffer('a_Position', positions, 2);
+    buffer('a_Color', colors, 4);
+
+    gl.drawArrays(RenderingContext.TRIANGLES, 0, length * 3);
+  }
+
+  @override
+  void updateLength(int length) {
+    positions = new Float32List(length * 2 * 3);
+    colors = new Float32List(length * 4 * 3);
+  }
+
+  @override
+  String get vShaderSource => '''
+attribute vec2 a_Position;
+attribute vec4 a_Color;
+varying vec4 v_Color;
+void main() {
+  gl_Position = vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
+  v_Color = a_Color;
+}
+''';
+
+  @override
+  String get fShaderSource => '''
+precision highp float;
+varying vec4 v_Color;
+void main() {
+  gl_FragColor = v_Color;
+}
+''';
 }
