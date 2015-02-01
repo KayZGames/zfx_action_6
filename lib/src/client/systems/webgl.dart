@@ -325,7 +325,9 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
 
   Float32List positions;
   Float32List colors;
-  Float32List sizes;
+
+  int maxTriangles = 16;
+  int vertices = 3;
 
   CircleRenderingSystem(RenderingContext gl)
       : super(gl, Aspect.getAspectForAllOf([Position, Circle, Color, Heartbeat]));
@@ -337,7 +339,7 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
     var color = colorMapper[entity];
     var hb = hbMapper[entity];
 
-    var beat = 60000 / hb.frequency;
+    var beat = 60 / hb.frequency;
     var mod = 0.01;
     var red = color.red;
     var green = color.green;
@@ -357,22 +359,28 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
     if (heartbeatMod > 0.8 * beat) {
       radius = radius + (1000 * heartbeatMod / beat - 800) * mod;
     }
+    for (int triangle = 0; triangle < maxTriangles; triangle++) {
+      for (int vertex = 0; vertex < vertices; vertex++) {
+        var colorIndex = ((index * maxTriangles + triangle) * vertices + vertex) * 4;
 
-    sizes[index] = radius * 2;
-
-    positions[index * 2] = position.x;
-    positions[index * 2 + 1] = position.y;
-
-    colors[index * 4] = red;
-    colors[index * 4 + 1] = green;
-    colors[index * 4 + 2] = blue;
-    colors[index * 4 + 3] = color.alpha;
+        colors[colorIndex] = red;
+        colors[colorIndex + 1] = green;
+        colors[colorIndex + 2] = blue;
+        colors[colorIndex + 3] = color.alpha;
+      }
+      var posIndex = (index * maxTriangles + triangle) * 2 * vertices;
+      positions[posIndex] = position.x;
+      positions[posIndex + 1] = position.y;
+      positions[posIndex + 2] = position.x + radius * cos(2 * PI * triangle / maxTriangles);
+      positions[posIndex + 3] = position.y + radius * sin(2 * PI * triangle / maxTriangles);
+      positions[posIndex + 4] = position.x + radius * cos(2 * PI * (triangle+1) / maxTriangles);
+      positions[posIndex + 5] = position.y + radius * sin(2 * PI * (triangle+1) / maxTriangles);
+    }
   }
 
 
   @override
   void render(int length) {
-    buffer('a_Size', sizes, 1);
     buffer('a_Position', positions, 2);
     buffer('a_Color', colors, 4);
 
@@ -380,26 +388,23 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
     var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
     gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
 
-    gl.drawArrays(RenderingContext.POINTS, 0, length);
+    gl.drawArrays(RenderingContext.TRIANGLES, 0, length * maxTriangles * vertices);
   }
 
   @override
   void updateLength(int length) {
-    sizes = new Float32List(length);
-    positions = new Float32List(length * 2);
-    colors = new Float32List(length * 4);
+    positions = new Float32List(length * 2 * maxTriangles * vertices);
+    colors = new Float32List(length * 4 * maxTriangles * vertices);
   }
 
   @override
   String get vShaderSource => '''
 uniform mat4 uModelMatrix;
-attribute float a_Size;
 attribute vec2 a_Position;
 attribute vec4 a_Color;
 varying vec4 v_Color;
 void main() {
   gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
-  gl_PointSize = a_Size;
   v_Color = a_Color;
 }
 ''';
