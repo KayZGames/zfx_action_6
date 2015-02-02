@@ -60,7 +60,7 @@ class Game extends GameBase {
 
         new TweeningSystem(),
 
-//        new CanvasCleaningSystem(ctx),
+        new WebGlCanvasCleaningSystem(ctx),
 
 //        new CanvasCleaningSystem(canvas, fillStyle: 'black'),
 //        new RageModeRenderer(ctx),

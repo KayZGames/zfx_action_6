@@ -12,4 +12,6 @@ dependencies:
   lawndart: any
 transformers:
 - dart_to_js_script_rewriter
-- dartemis
+- dartemis:
+    additionalLibraries:
+    - gamedev_helpers/gamedev_helpers.dart
