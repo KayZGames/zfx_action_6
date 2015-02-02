@@ -257,6 +257,58 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
   String get fShaderFile => 'basicColor';
 }
 
+class PainometerRenderingSystem extends VoidWebGlRenderingSystem {
+  Float32List positions = new Float32List(8);
+  Float32List colors = new Float32List(16);
+  PainometerRenderingSystem(RenderingContext gl) : super(gl);
+
+  void initialize() {
+    super.initialize();
+    positions[0] = 100.0;
+    positions[1] = 570.0;
+    positions[2] = 100.0;
+    positions[3] = 590.0;
+    // x of bottom right vertex
+    positions[5] = 590.0;
+    // x of top right vertex
+    positions[7] = 570.0;
+
+    colors[0] = 0.0;
+    colors[1] = 0.5;
+    colors[2] = 0.0;
+    colors[3] = 1.0;
+    colors[4] = 0.0;
+    colors[5] = 0.5;
+    colors[6] = 0.0;
+    colors[7] = 1.0;
+    colors[10] = 0.0;
+    colors[11] = 1.0;
+    colors[14] = 0.0;
+    colors[15] = 1.0;
+  }
+
+  @override
+  void render() {
+    var painometer = min(100.0, gameState.painometer);
+    positions[4] = 100.0 + painometer * 6.0;
+    positions[6] = 100.0 + painometer * 6.0;
+
+    colors[8] = painometer / 100.0;
+    colors[9] = 0.5 - painometer / 200.0;
+    colors[12] = painometer / 100.0;
+    colors[13] = 0.5 - painometer / 200.0;
+
+    buffer('a_Position', positions, 2);
+    buffer('a_Color', colors, 4);
+
+    gl.drawArrays(RenderingContext.TRIANGLE_FAN, 0, 4);
+  }
+
+  @override
+  String get fShaderFile => 'basicColor';
+}
+
+
 Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
   var player = tm.getEntity(playerTag);
   var angle = 0.0;
