@@ -1,99 +1,5 @@
 part of client;
 
-class CanvasCleaningSystem extends VoidEntitySystem {
-  RenderingContext gl;
-
-  CanvasCleaningSystem(this.gl);
-
-  @override
-  void processSystem() {
-    gl
-        ..clearColor(0, 0, 0, 1)
-        ..clear(RenderingContext.COLOR_BUFFER_BIT);
-  }
-}
-
-abstract class WebGlRenderingSystem extends EntitySystem {
-  RenderingContext gl;
-  Program program;
-  bool success = true;
-  Map<String, Buffer> buffers = <String, Buffer>{};
-  int maxLength = 0;
-
-  WebGlRenderingSystem(this.gl, Aspect aspect) : super(aspect);
-
-  @override
-  void initialize() {
-    var vShader = _createShader(RenderingContext.VERTEX_SHADER, vShaderSource);
-    var fShader = _createShader(RenderingContext.FRAGMENT_SHADER, fShaderSource);
-
-    _createProgram(vShader, fShader);
-  }
-
-  void _createProgram(Shader vShader, Shader fShader) {
-    program = gl.createProgram();
-    gl.attachShader(program, vShader);
-    gl.attachShader(program, fShader);
-    gl.linkProgram(program);
-    var linkSuccess = gl.getProgramParameter(program, RenderingContext.LINK_STATUS);
-    if (!linkSuccess) {
-      print('Error linking program: ${gl.getProgramInfoLog(program)}');
-      success = false;
-    }
-  }
-
-  Shader _createShader(int type, String source) {
-    var shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    var compileSuccess = gl.getShaderParameter(shader, RenderingContext.COMPILE_STATUS);
-    if (!compileSuccess) {
-      print('Error compiling shader: ${gl.getShaderInfoLog(shader)}');
-      success = false;
-    }
-    return shader;
-  }
-
-  @override
-  void processEntities(Iterable<Entity> entities) {
-    var length = entities.length;
-    if (length > 0) {
-      gl.useProgram(program);
-      if (length > maxLength) {
-        updateLength(length);
-        maxLength = length;
-      }
-      var index = 0;
-      entities.forEach((entity) {
-        processEntity(index++, entity);
-      });
-      render(length);
-    }
-  }
-
-  void buffer(String attribute, Float32List items, int itemSize) {
-    var buffer = buffers[attribute];
-    if (null == buffer) {
-      buffer = gl.createBuffer();
-      buffers[attribute] = buffer;
-    }
-    var attribLocation = gl.getAttribLocation(program, attribute);
-    gl.bindBuffer(RenderingContext.ARRAY_BUFFER, buffer);
-    gl.bufferData(RenderingContext.ARRAY_BUFFER, items, RenderingContext.STREAM_DRAW);
-    gl.vertexAttribPointer(attribLocation, itemSize, RenderingContext.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(attribLocation);
-  }
-
-  @override
-  bool checkProcessing() => success;
-
-  void updateLength(int length);
-  void processEntity(int index, Entity entity);
-  void render(int length);
-  String get vShaderSource;
-  String get fShaderSource;
-}
-
 class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   TagManager tm;
   Mapper<Position> pm;
@@ -125,7 +31,7 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   void render(int length) {
     buffer('a_Position', positions, 2);
     buffer('a_PointSize', sizes, 1);
-    buffer('a_FragColor', colors, 4);
+    buffer('a_Color', colors, 4);
 
     var modelMatrix = createModelMatrix(tm, pm);
     var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
@@ -141,25 +47,7 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
     sizes = new Float32List(length);
   }
 
-  String get vShaderSource => '''
-uniform mat4 uModelMatrix;
-attribute vec2 a_Position;
-attribute float a_PointSize;
-attribute vec4 a_FragColor;
-varying vec4 v_FragColor;
-void main() {
-  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
-  gl_PointSize = a_PointSize;
-  v_FragColor = a_FragColor;
-}
-''';
-  String get fShaderSource => '''
-precision highp float;
-varying vec4 v_FragColor;
-void main() {
-  gl_FragColor = v_FragColor;
-}
-''';
+  String get fShaderFile => 'basicColor';
 }
 
 class ParticleRenderingSystem extends WebGlRenderingSystem {
@@ -206,27 +94,7 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
   }
 
   @override
-  String get vShaderSource => '''
-uniform mat4 uModelMatrix;
-attribute vec2 a_Position;
-attribute vec4 a_Color;
-varying vec4 v_Color;
-void main() {
-  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
-  gl_PointSize = 1.0;
-  v_Color = a_Color;
-}
-''';
-
-  @override
-  String get fShaderSource => '''
-precision highp float;
-varying vec4 v_Color;
-void main() {
-  gl_FragColor = v_Color;
-}
-''';
-
+  String get fShaderFile => 'basicColor';
 }
 
 
@@ -295,25 +163,10 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
   }
 
   @override
-  String get vShaderSource => '''
-uniform mat4 uModelMatrix;
-attribute vec2 a_Position;
-attribute vec4 a_Color;
-varying vec4 v_Color;
-void main() {
-  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
-  v_Color = a_Color;
-}
-''';
+  String get vShaderFile => 'basicTriangles';
 
   @override
-  String get fShaderSource => '''
-precision highp float;
-varying vec4 v_Color;
-void main() {
-  gl_FragColor = v_Color;
-}
-''';
+  String get fShaderFile => 'basicColor';
 }
 
 class CircleRenderingSystem extends WebGlRenderingSystem {
@@ -373,8 +226,8 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
       positions[posIndex + 1] = position.y;
       positions[posIndex + 2] = position.x + radius * cos(2 * PI * triangle / maxTriangles);
       positions[posIndex + 3] = position.y + radius * sin(2 * PI * triangle / maxTriangles);
-      positions[posIndex + 4] = position.x + radius * cos(2 * PI * (triangle+1) / maxTriangles);
-      positions[posIndex + 5] = position.y + radius * sin(2 * PI * (triangle+1) / maxTriangles);
+      positions[posIndex + 4] = position.x + radius * cos(2 * PI * (triangle + 1) / maxTriangles);
+      positions[posIndex + 5] = position.y + radius * sin(2 * PI * (triangle + 1) / maxTriangles);
     }
   }
 
@@ -398,25 +251,10 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
   }
 
   @override
-  String get vShaderSource => '''
-uniform mat4 uModelMatrix;
-attribute vec2 a_Position;
-attribute vec4 a_Color;
-varying vec4 v_Color;
-void main() {
-  gl_Position = uModelMatrix * vec4(a_Position.x / 400.0 - 1.0, -(a_Position.y / 300.0 - 1.0), 0.0, 1.0);
-  v_Color = a_Color;
-}
-''';
+  String get vShaderFile => 'basicTriangles';
 
   @override
-  String get fShaderSource => '''
-precision highp float;
-varying vec4 v_Color;
-void main() {
-  gl_FragColor = v_Color;
-}
-''';
+  String get fShaderFile => 'basicColor';
 }
 
 Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
