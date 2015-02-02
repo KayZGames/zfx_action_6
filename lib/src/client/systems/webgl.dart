@@ -141,6 +141,10 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
       colors[colorIndex + 2] = c.blue;
       colors[colorIndex + 3] = c.alpha;
     }
+    // fancy colors
+    colors[index * 12] = 1.0;
+    colors[index * 12 + 1] = c.blue;
+    colors[index * 12 + 2] = c.green;
   }
 
 
