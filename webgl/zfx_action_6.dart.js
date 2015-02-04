@@ -2106,6 +2106,7 @@ this.db=new Float32Array(H.T0(z.R(a,3)))
 this.dx=new Float32Array(H.T0(z.R(a,4)))
 this.dy=new Float32Array(H.T0(a))},
 gy5:function(){return"basicColor"},
+gR0:function(){return"BackgroundDotRenderingSystem"},
 eQ:function(){var z,y,x
 this.od()
 z=this.a
@@ -2173,6 +2174,7 @@ oG:function(a){var z=J.Qc(a)
 this.db=new Float32Array(H.T0(z.R(a,2)))
 this.dx=new Float32Array(H.T0(z.R(a,4)))},
 gy5:function(){return"basicColor"},
+gR0:function(){return"ParticleRenderingSystem"},
 eQ:function(){var z,y,x
 this.od()
 z=this.a
@@ -2449,7 +2451,8 @@ x[13]=v
 this.Y7(0,"a_Position",y,2)
 this.Y7(0,"a_Color",this.z,4)
 J.iw(this.x,6,0,4)},
-gy5:function(){return"basicColor"}}}],["","",,H,{
+gy5:function(){return"basicColor"},
+gR0:function(){return"PainometerRenderingSystem"}}}],["","",,H,{
 "^":"",
 Wp:function(){return new P.lj("No element")},
 ar:function(){return new P.lj("Too few elements")},
@@ -6470,8 +6473,8 @@ y=H.J(new P.vs(0,$.X3,null),[null])
 y.Xf(z)
 return y},"$1","Yi",2,0,36,37],
 ld:function(a,b,c){var z=Array(2)
-z[0]=W.Kn("packages/"+a+"/assets/shader/"+H.d(b)+".vert",null,null)
-z[1]=W.Kn("packages/"+a+"/assets/shader/"+H.d(c)+".frag",null,null)
+z[0]=W.Kn("packages/"+a+"/assets/shader/"+b+".vert",null,null)
+z[1]=W.Kn("packages/"+a+"/assets/shader/"+c+".frag",null,null)
 return P.pH(z,null,!1).Z(new L.vo())},
 aZ:[function(a){var z,y
 z=C.xr.kV(a)
@@ -6572,8 +6575,6 @@ J.wY(this.gWy(),34962,y)
 J.Wk(this.gWy(),34962,c,35048)
 J.GB(this.gWy(),x,d,5126,!1,0,0)
 J.Oo(this.gWy(),x)},
-gR0:function(){return new H.cu(H.dJ(this),null).X(0)},
-gy5:function(){return new H.cu(H.dJ(this),null).X(0)},
 $isCJ:true},
 fX:{
 "^":"he;Wy:x<,m0:y*",
