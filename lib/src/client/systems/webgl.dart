@@ -18,8 +18,9 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
     var c = cm[entity];
     var b = bm[entity];
 
-    positions[index * 2] = p.x;
-    positions[index * 2 + 1] = p.y;
+    positions[index * 3] = p.x;
+    positions[index * 3 + 1] = p.y;
+    positions[index * 3 + 2] = p.z;
     sizes[index] = b.size;
     colors[index * 4] = c.red;
     colors[index * 4 + 1] = c.green;
@@ -29,7 +30,7 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 2);
+    buffer('a_Position', positions, 3);
     buffer('a_PointSize', sizes, 1);
     buffer('a_Color', colors, 4);
 
@@ -42,7 +43,7 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void updateLength(int length) {
-    positions = new Float32List(length * 2);
+    positions = new Float32List(length * 3);
     colors = new Float32List(length * 4);
     sizes = new Float32List(length);
   }
@@ -129,12 +130,13 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
     var size = t.size * beatMod;
 
     for (int vertex = 0; vertex < 3; vertex++) {
-      var posIndex = index * 6 + vertex * 2;
+      var posIndex = index * 9 + vertex * 3;
       var colorIndex = index * 12 + vertex * 4;
       var vertexAngle = angle + PI * 2 * vertex / 3;
 
       positions[posIndex] = p.x + cos(vertexAngle) * size;
       positions[posIndex + 1] = p.y + sin(vertexAngle) * size;
+      positions[posIndex + 2] = p.z;
 
       colors[colorIndex] = c.red;
       colors[colorIndex + 1] = c.green;
@@ -150,7 +152,7 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 2);
+    buffer('a_Position', positions, 3);
     buffer('a_Color', colors, 4);
 
     var modelMatrix = createModelMatrix(tagManager, pm);
@@ -162,7 +164,7 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void updateLength(int length) {
-    positions = new Float32List(length * 2 * 3);
+    positions = new Float32List(length * 3 * 3);
     colors = new Float32List(length * 4 * 3);
   }
 
@@ -319,6 +321,11 @@ Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
   if (null != player) {
     angle = PI / 8 * (pm[player].x / 400.0 - 1);
   }
+  var viewMatrix = new Matrix4.identity();
+  var projMatrix = new Matrix4.identity();
+  setViewMatrix(viewMatrix, new Vector3(400.0 + 100 * sin(angle), 550.0, -150.0), new Vector3(400.0, 200.0, 150.0), new Vector3(0.0, -1.0, 0.0));
+//  setOrthographicMatrix(projMatrix, 00, 800, 600, 0, 100, -100);
+  setPerspectiveMatrix(projMatrix, PI/2, 4/3, 1, 1000);
   var modelMatrix = new Matrix4.rotationY(angle);
-  return modelMatrix;
+  return projMatrix * viewMatrix;
 }

@@ -28,7 +28,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
     world.createAndAddEntity(
         [
             new Triangle(size),
-            new Position(400 + cos(orientation - PI) * 500.0, 300 + sin(orientation - PI) * 400.0),
+            new Position(400 + cos(orientation - PI) * 500.0, 300 + sin(orientation - PI) * 400.0, -20.0),
             new Orientation(orientation),
             new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
             new Lifetime(4.0),
@@ -58,7 +58,7 @@ class TriangleSpawningSystem extends VoidEntitySystem {
       world.createAndAddEntity(
           [
               new Triangle(size),
-              new Position(400 + cos(orientation - PI) * 500.0, verticalPosBase + distance * i),
+              new Position(400 + cos(orientation - PI) * 500.0, verticalPosBase + distance * i, 0.0),
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
               new Lifetime(4.0),
@@ -88,10 +88,10 @@ class TriangleSpawningSystem extends VoidEntitySystem {
       world.createAndAddEntity(
           [
               new Triangle(size),
-              new Position(horizontalPosBase + distance * i, 300 + sin(orientation - PI) * 400.0),
+              new Position(horizontalPosBase + distance * i, 2000.0, 0.0),
               new Orientation(orientation),
               new Velocity(velocity * cos(orientation), velocity * sin(orientation)),
-              new Lifetime(4.0),
+              new Lifetime(10.0),
               new Thruster(size * sin(PI / 4)),
               acceleration,
               new Color(green: green, blue: blue)]);
@@ -121,14 +121,14 @@ class BackgroundDotSpawner extends VoidEntitySystem {
     }
     world.createAndAddEntity(
         [
-            new Position(random.nextDouble() * 800.0, -5.0),
+            new Position(-750.0 + random.nextDouble() * 2300.0, -600.0, -500.0 + 1000.0 * random.nextDouble()),
             new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
             new Color(
                 red: 0.6 + random.nextDouble() * 0.4,
                 green: 0.6 + random.nextDouble() * 0.4,
                 blue: 0.6 + random.nextDouble() * 0.4),
-            new Background(1 + random.nextDouble() * 3),
-            new Lifetime(10.0)]);
+            new Background(random.nextDouble() * 5),
+            new Lifetime(20.0)]);
   }
 
   @override
@@ -142,7 +142,7 @@ class FriendSpawner extends VoidEntitySystem {
   void processSystem() {
     world.createAndAddEntity(
         [
-            new Position(100 + random.nextDouble() * 600, -20.0),
+            new Position(100 + random.nextDouble() * 600, -20.0, 0.0),
             new Orientation(0.0),
             new Circle(5.0),
             new Velocity(0.0, 0.0),

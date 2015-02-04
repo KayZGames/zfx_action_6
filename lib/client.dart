@@ -33,7 +33,7 @@ class Game extends GameBase {
     var e = addEntity(
         [
             new Circle(20.0),
-            new Position(400.0, 300.0),
+            new Position(400.0, 300.0, 0.0),
             new Color(red: 1.0, green: 1.0, blue: 1.0),
             new Heartbeat(),
             new Health(100.0, 100.0)]);

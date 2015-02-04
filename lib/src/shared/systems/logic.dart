@@ -54,7 +54,7 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
                   [
                       particle,
                       new Color(green: 0.6 + 0.4 * random.nextDouble(), blue: 0.6 + 0.4 * random.nextDouble()),
-                      new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
+                      new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter, 0.0),
                       new Velocity(
                           cos(angleToCenter) * distanceToCenter / t.size * 500,
                           sin(angleToCenter) * distanceToCenter / t.size * 500),
@@ -189,7 +189,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
           [
               particle,
               new Color(red: 0.6 + 0.4 * random.nextDouble()),
-              new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter),
+              new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter, 0.0),
               new Velocity(
                   cos(angleToCenter) * distanceToCenter / c.radius * 500,
                   sin(angleToCenter) * distanceToCenter / c.radius * 500),
@@ -282,7 +282,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
       world.createAndAddEntity(
           [
               particle,
-              new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance),
+              new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance, 0.0),
               new Velocity(-cos(emitAngle) * 100 * random.nextDouble(), -sin(emitAngle) * 100 * random.nextDouble()),
               new Color(red: 0.8 + 0.2 *random.nextDouble(), green: 0.2 + 0.8 * random.nextDouble()),
               new Lifetime(lifetime)]);

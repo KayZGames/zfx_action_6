@@ -16,8 +16,8 @@ class Thruster extends Component {
 }
 
 class Position extends Component {
-  double x, y;
-  Position(this.x, this.y);
+  double x, y, z;
+  Position(this.x, this.y, this.z);
 
   double distanceTo(Position other) {
     return sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
