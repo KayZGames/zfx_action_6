@@ -49,6 +49,9 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
   }
 
   String get fShaderFile => 'basicColor';
+
+  @override
+  String get vShaderFile => 'BackgroundDotRenderingSystem';
 }
 
 class ParticleRenderingSystem extends WebGlRenderingSystem {
@@ -96,6 +99,9 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   String get fShaderFile => 'basicColor';
+
+  @override
+  String get vShaderFile => 'ParticleRenderingSystem';
 }
 
 
@@ -312,6 +318,9 @@ class PainometerRenderingSystem extends VoidWebGlRenderingSystem {
 
   @override
   String get fShaderFile => 'basicColor';
+
+  @override
+  String get vShaderFile => 'PainometerRenderingSystem';
 }
 
 
