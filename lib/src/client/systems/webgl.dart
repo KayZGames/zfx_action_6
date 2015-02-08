@@ -112,8 +112,12 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
   Mapper<Color> cm;
   Mapper<Orientation> om;
   double beatMod = 1.0;
-  Float32List positions;
-  Float32List colors;
+  Float32List positionsAndColors;
+  Uint16List indices;
+  static const indexCount = 12;
+  static const verticesPerTriangle = 6;
+  static const sizePerVertex = 7;
+  static const sizePerTriangle = verticesPerTriangle * sizePerVertex;
 
   TriangleRenderingSystem(RenderingContext gl)
       : super(gl, Aspect.getAspectForAllOf([Position, Triangle, Color, Orientation]));
@@ -135,43 +139,63 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
     var size = t.size * beatMod;
 
-    for (int vertex = 0; vertex < 3; vertex++) {
-      var posIndex = index * 9 + vertex * 3;
-      var colorIndex = index * 12 + vertex * 4;
-      var vertexAngle = angle + PI * 2 * vertex / 3;
 
-      positions[posIndex] = p.x + cos(vertexAngle) * size;
-      positions[posIndex + 1] = p.y + sin(vertexAngle) * size;
-      positions[posIndex + 2] = p.z;
+    setVertex(index * sizePerTriangle, p.x + cos(angle) * size, p.y + sin(angle) * size, p.z, c);
+    setVertex(index * sizePerTriangle + 7, p.x + cos(angle + PI * 2 / 3) * size, p.y + sin(angle + PI * 2 / 3) * size, p.z, c);
+    setVertex(index * sizePerTriangle + 14, p.x + cos(angle + PI * 4 / 3) * size, p.y + sin(angle + PI * 4 / 3) * size, p.z, c);
+    setVertex(index * sizePerTriangle + 21, p.x - cos(angle) * size, p.y - sin(angle) * size, p.z - size, c);
+    setVertex(index * sizePerTriangle + 28, p.x - cos(angle - PI/4) * size/2, p.y - sin(angle - PI/4) * size/2, p.z - size/2, c);
+    setVertex(index * sizePerTriangle + 35, p.x - cos(angle + PI/4) * size/2, p.y - sin(angle + PI/4) * size/2, p.z - size/2, c);
 
-      colors[colorIndex] = c.red;
-      colors[colorIndex + 1] = c.green;
-      colors[colorIndex + 2] = c.blue;
-      colors[colorIndex + 3] = c.alpha;
-    }
+    indices[index * indexCount + 0] = index * verticesPerTriangle + 0;
+    indices[index * indexCount + 1] = index * verticesPerTriangle + 1;
+    indices[index * indexCount + 2] = index * verticesPerTriangle + 4;
+
+    indices[index * indexCount + 3] = index * verticesPerTriangle + 0;
+    indices[index * indexCount + 4] = index * verticesPerTriangle + 4;
+    indices[index * indexCount + 5] = index * verticesPerTriangle + 3;
+
+    indices[index * indexCount + 6] = index * verticesPerTriangle + 0;
+    indices[index * indexCount + 7] = index * verticesPerTriangle + 3;
+    indices[index * indexCount + 8] = index * verticesPerTriangle + 5;
+
+    indices[index * indexCount + 9] = index * verticesPerTriangle + 0;
+    indices[index * indexCount + 10] = index * verticesPerTriangle + 5;
+    indices[index * indexCount + 11] = index * verticesPerTriangle + 2;
+
     // fancy colors
-    colors[index * 12] = 1.0;
-    colors[index * 12 + 1] = c.blue;
-    colors[index * 12 + 2] = c.green;
+    positionsAndColors[index * sizePerTriangle + 3] = 1.0;
+    positionsAndColors[index * sizePerTriangle + 4] = c.blue;
+    positionsAndColors[index * sizePerTriangle + 5] = c.green;
+  }
+
+  void setVertex(int posIndex, double x, double y, double z, Color c) {
+    positionsAndColors[posIndex] = x;
+    positionsAndColors[posIndex + 1] = y;
+    positionsAndColors[posIndex + 2] = z;
+
+    positionsAndColors[posIndex + 3] = c.red;
+    positionsAndColors[posIndex + 4] = c.green;
+    positionsAndColors[posIndex + 5] = c.blue;
+    positionsAndColors[posIndex + 6] = c.alpha;
   }
 
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 3);
-    buffer('a_Color', colors, 4);
+    bufferElements([const Attrib('a_Position', 3), const Attrib('a_Color', 4)], positionsAndColors, indices);
 
     var modelMatrix = createModelMatrix(tagManager, pm);
     var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
     gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
 
-    gl.drawArrays(RenderingContext.TRIANGLES, 0, length * 3);
+    gl.drawElements(RenderingContext.TRIANGLES, length * indexCount, RenderingContext.UNSIGNED_SHORT, 0);
   }
 
   @override
   void updateLength(int length) {
-    positions = new Float32List(length * 3 * 3);
-    colors = new Float32List(length * 4 * 3);
+    positionsAndColors = new Float32List(length * sizePerTriangle);
+    indices = new Uint16List(length * indexCount);
   }
 
   @override
@@ -332,9 +356,13 @@ Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
   }
   var viewMatrix = new Matrix4.identity();
   var projMatrix = new Matrix4.identity();
-  setViewMatrix(viewMatrix, new Vector3(400.0 + 100 * sin(angle), 550.0, -150.0), new Vector3(400.0, 200.0, 150.0), new Vector3(0.0, -1.0, 0.0));
+  setViewMatrix(
+      viewMatrix,
+      new Vector3(400.0 + 100 * sin(angle), 550.0, -150.0),
+      new Vector3(400.0, 200.0, 150.0),
+      new Vector3(0.0, -1.0, 0.0));
 //  setOrthographicMatrix(projMatrix, 00, 800, 600, 0, 100, -100);
-  setPerspectiveMatrix(projMatrix, PI/2, 4/3, 1, 1000);
+  setPerspectiveMatrix(projMatrix, PI / 2, 4 / 3, 1, 1000);
   var modelMatrix = new Matrix4.rotationY(angle);
   return projMatrix * viewMatrix;
 }
