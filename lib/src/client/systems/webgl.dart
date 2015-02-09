@@ -71,8 +71,9 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
     var c = cm[entity];
     var particle = particleMapper[entity];
 
-    positions[index * 2] = p.x;
-    positions[index * 2 + 1] = p.y;
+    positions[index * 3] = p.x;
+    positions[index * 3 + 1] = p.y;
+    positions[index * 3 + 2] = p.z;
     colors[index * 4] = c.red;
     colors[index * 4 + 1] = c.green;
     colors[index * 4 + 2] = c.blue;
@@ -81,7 +82,7 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 2);
+    buffer('a_Position', positions, 3);
     buffer('a_Color', colors, 4);
 
     var modelMatrix = createModelMatrix(tm, pm);
@@ -93,7 +94,7 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void updateLength(int length) {
-    positions = new Float32List(length * 2);
+    positions = new Float32List(length * 3);
     colors = new Float32List(length * 4);
   }
 

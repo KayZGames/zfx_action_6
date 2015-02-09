@@ -114,15 +114,18 @@ class BackgroundDotSpawner extends VoidEntitySystem {
   @override
   void processSystem() {
     var minSpeed = 0.0;
-    var speedMod = 25;
+    var speedMod = 100;
     if (gameState.rageMode) {
       minSpeed = 200 * gameState.rageMod;
       speedMod = 200 * gameState.rageMod;
     }
+    var speed = minSpeed + random.nextDouble() * speedMod;
+    var maxSpeed = minSpeed + speedMod;
+    var z = 250.0 * (1.0 - speed/maxSpeed) * (random.nextBool() ? 1 : -1);
     world.createAndAddEntity(
         [
-            new Position(-750.0 + random.nextDouble() * 2300.0, -600.0, -500.0 + 1000.0 * random.nextDouble()),
-            new Velocity(0.0, minSpeed + random.nextDouble() * speedMod),
+            new Position(-750.0 + random.nextDouble() * 2300.0, -600.0, z),
+            new Velocity(0.0, speed),
             new Color(
                 red: 0.6 + random.nextDouble() * 0.4,
                 green: 0.6 + random.nextDouble() * 0.4,

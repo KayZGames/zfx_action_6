@@ -44,8 +44,9 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
                 ..changedInWorld();
 
             for (int i = 0; i < t.size * t.size / 2; i++) {
-              var distanceToCenter = t.size* random.nextDouble();
+              var distanceToCenter = t.size * random.nextDouble();
               var angleToCenter = 2 * PI * random.nextDouble();
+              var zAngle = 2 * PI * random.nextDouble();
               var lifetime = 0.5 + random.nextDouble();
               var particle = new Particle();
               easeParticle(particle, lifetime);
@@ -57,7 +58,8 @@ class CircleTriangleCollisionDetectionSystem extends EntitySystem {
                       new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter, 0.0),
                       new Velocity(
                           cos(angleToCenter) * distanceToCenter / t.size * 500,
-                          sin(angleToCenter) * distanceToCenter / t.size * 500),
+                          sin(angleToCenter) * distanceToCenter / t.size * 500,
+                          sin(zAngle) * distanceToCenter / t.size * 500),
                       new Lifetime(lifetime)]);
             }
 
@@ -181,6 +183,7 @@ class CircleDestructionSystem extends EntityProcessingSystem {
     for (int i = 0; i < PI * c.radius * c.radius; i++) {
       var distanceToCenter = c.radius * random.nextDouble();
       var angleToCenter = 2 * PI * random.nextDouble();
+      var zAngle = 2 * PI * random.nextDouble();
       var lifetime = 0.5 + random.nextDouble();
       var particle = new Particle();
       easeParticle(particle, lifetime);
@@ -192,7 +195,8 @@ class CircleDestructionSystem extends EntityProcessingSystem {
               new Position(p.x + cos(angleToCenter) * distanceToCenter, p.y + sin(angleToCenter) * distanceToCenter, 0.0),
               new Velocity(
                   cos(angleToCenter) * distanceToCenter / c.radius * 500,
-                  sin(angleToCenter) * distanceToCenter / c.radius * 500),
+                  sin(angleToCenter) * distanceToCenter / c.radius * 500,
+                  sin(zAngle) * (1.0 - distanceToCenter / c.radius) * 500),
               new Lifetime(lifetime)]);
     }
 
@@ -237,6 +241,7 @@ class MovementSystem extends EntityProcessingSystem {
 
     p.x += v.x * world.delta;
     p.y += (v.y + pretendMovementY) * world.delta;
+    p.z += v.z * world.delta;
   }
 }
 
@@ -276,6 +281,7 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
     for (int i = 0; i < random.nextInt(5); i++) {
       var lifetime = 0.5 + 0.1 * random.nextDouble();
       var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
+      var zAngle = PI / 4 - random.nextDouble() * PI / 2;
       var particle = new Particle();
       easeParticle(particle, lifetime);
 
@@ -283,8 +289,11 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
           [
               particle,
               new Position(p.x - cos(emitAngle) * t.coreDistance, p.y - sin(emitAngle) * t.coreDistance, 0.0),
-              new Velocity(-cos(emitAngle) * 100 * random.nextDouble(), -sin(emitAngle) * 100 * random.nextDouble()),
-              new Color(red: 0.8 + 0.2 *random.nextDouble(), green: 0.2 + 0.8 * random.nextDouble()),
+              new Velocity(
+                  -cos(emitAngle) * 100 * random.nextDouble(),
+                  -sin(emitAngle) * 100 * random.nextDouble(),
+                  sin(zAngle) * 100 * random.nextDouble()),
+              new Color(red: 0.8 + 0.2 * random.nextDouble(), green: 0.2 + 0.8 * random.nextDouble()),
               new Lifetime(lifetime)]);
     }
   }
