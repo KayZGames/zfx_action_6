@@ -71,10 +71,10 @@ class Game extends GameBase {
 
         new CanvasCleaningSystem(hudCanvas, fillStyle: 'rgba(0, 0, 0, 0)'),
         new RageModeRenderer(hudCtx),
-        new BackgroundDotRenderingSystem(ctx),
         new ParticleRenderingSystem(ctx),
         new TriangleRenderingSystem(ctx),
         new CircleRenderingSystem(ctx),
+        new BackgroundDotRenderingSystem(ctx),
         new MessageRenderingSystem(hudCtx),
         new GameOverRenderingSystem(hudCtx),
         new GameStateRenderingSystem(hudCtx),

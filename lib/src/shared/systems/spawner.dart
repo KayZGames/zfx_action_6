@@ -124,13 +124,13 @@ class BackgroundDotSpawner extends VoidEntitySystem {
     var z = 250.0 * (1.0 - speed/maxSpeed) * (random.nextBool() ? 1 : -1);
     world.createAndAddEntity(
         [
-            new Position(-750.0 + random.nextDouble() * 2300.0, -600.0, z),
+            new Position(-750.0 + random.nextDouble() * 2300.0, -1000.0, z),
             new Velocity(0.0, speed),
             new Color(
                 red: 0.6 + random.nextDouble() * 0.4,
                 green: 0.6 + random.nextDouble() * 0.4,
                 blue: 0.6 + random.nextDouble() * 0.4),
-            new Background(random.nextDouble() * 5),
+            new Background(2.0 + random.nextDouble() * 8),
             new Lifetime(20.0)]);
   }
 

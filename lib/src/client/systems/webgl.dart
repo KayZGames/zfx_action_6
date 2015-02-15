@@ -48,7 +48,8 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
     sizes = new Float32List(length);
   }
 
-  String get fShaderFile => 'basicColor';
+  @override
+  String get fShaderFile => 'BackgroundDotRenderingSystem';
 
   @override
   String get vShaderFile => 'BackgroundDotRenderingSystem';
