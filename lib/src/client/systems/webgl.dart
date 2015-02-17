@@ -371,7 +371,7 @@ Matrix4 createViewProjectionMatrix(TagManager tm, World world) {
   setPerspectiveMatrix(projMatrix, PI / 2, 4 / 3, 1, 1000);
   var threedViewProjextionMatrix = projMatrix * viewMatrix;
   var twodOrthographicMatrix = new Matrix4.identity();
-  setOrthographicMatrix(twodOrthographicMatrix, 00, 800, 600, 0, 100, -100);
+  setOrthographicMatrix(twodOrthographicMatrix, 00, 800, 600, 0, 250, -250);
 
   return threedViewProjextionMatrix * camera.three + twodOrthographicMatrix * camera.two;
 }
