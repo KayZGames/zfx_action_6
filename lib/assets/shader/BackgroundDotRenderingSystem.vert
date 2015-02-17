@@ -1,10 +1,10 @@
-uniform mat4 uModelMatrix;
-attribute vec4 a_Position;
-attribute float a_PointSize;
-attribute vec4 a_Color;
-varying vec4 v_Color;
+uniform mat4 uViewProjectionMatrix;
+attribute vec4 aPosition;
+attribute float aPointSize;
+attribute vec4 aColor;
+varying vec4 vColor;
 void main() {
-  gl_Position = uModelMatrix * a_Position;
-  gl_PointSize = a_PointSize;
-  v_Color = a_Color;
+  gl_Position = uViewProjectionMatrix * aPosition;
+  gl_PointSize = aPointSize;
+  vColor = aColor;
 }

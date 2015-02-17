@@ -30,13 +30,13 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 3);
-    buffer('a_PointSize', sizes, 1);
-    buffer('a_Color', colors, 4);
+    buffer('aPosition', positions, 3);
+    buffer('aPointSize', sizes, 1);
+    buffer('aColor', colors, 4);
 
-    var modelMatrix = createModelMatrix(tm, pm);
-    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
-    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
+    gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
     gl.drawArrays(RenderingContext.POINTS, 0, length);
   }
@@ -83,12 +83,12 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 3);
-    buffer('a_Color', colors, 4);
+    buffer('aPosition', positions, 3);
+    buffer('aColor', colors, 4);
 
-    var modelMatrix = createModelMatrix(tm, pm);
-    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
-    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
+    gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
     gl.drawArrays(RenderingContext.POINTS, 0, length);
   }
@@ -185,11 +185,11 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    bufferElements([const Attrib('a_Position', 3), const Attrib('a_Color', 4)], positionsAndColors, indices);
+    bufferElements([const Attrib('aPosition', 3), const Attrib('aColor', 4)], positionsAndColors, indices);
 
-    var modelMatrix = createModelMatrix(tagManager, pm);
-    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
-    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+    var modelMatrix = createViewProjectionMatrix(tagManager, pm);
+    var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
+    gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
     gl.drawElements(RenderingContext.TRIANGLES, length * indexCount, RenderingContext.UNSIGNED_SHORT, 0);
   }
@@ -272,12 +272,12 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void render(int length) {
-    buffer('a_Position', positions, 2);
-    buffer('a_Color', colors, 4);
+    buffer('aPosition', positions, 2);
+    buffer('aColor', colors, 4);
 
-    var modelMatrix = createModelMatrix(tm, pm);
-    var uModelMatrix = gl.getUniformLocation(program, 'uModelMatrix');
-    gl.uniformMatrix4fv(uModelMatrix, false, modelMatrix.storage);
+    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
+    gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
     gl.drawArrays(RenderingContext.TRIANGLES, 0, length * maxTriangles * vertices);
   }
@@ -336,8 +336,8 @@ class PainometerRenderingSystem extends VoidWebGlRenderingSystem {
     colors[12] = painometer / 100.0;
     colors[13] = 0.5 - painometer / 200.0;
 
-    buffer('a_Position', positions, 2);
-    buffer('a_Color', colors, 4);
+    buffer('aPosition', positions, 2);
+    buffer('aColor', colors, 4);
 
     gl.drawArrays(RenderingContext.TRIANGLE_FAN, 0, 4);
   }
@@ -350,7 +350,7 @@ class PainometerRenderingSystem extends VoidWebGlRenderingSystem {
 }
 
 
-Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
+Matrix4 createViewProjectionMatrix(TagManager tm, Mapper<Position> pm) {
   var player = tm.getEntity(playerTag);
   var angle = 0.0;
   if (null != player) {
@@ -365,6 +365,5 @@ Matrix4 createModelMatrix(TagManager tm, Mapper<Position> pm) {
       new Vector3(0.0, -1.0, 0.0));
 //  setOrthographicMatrix(projMatrix, 00, 800, 600, 0, 100, -100);
   setPerspectiveMatrix(projMatrix, PI / 2, 4 / 3, 1, 1000);
-  var modelMatrix = new Matrix4.rotationY(angle);
   return projMatrix * viewMatrix;
 }
