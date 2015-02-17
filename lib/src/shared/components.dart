@@ -141,5 +141,11 @@ class Alpha implements Tweenable {
       alpha = newValues[0];
     }
   }
+}
 
+class Camera extends Component {
+  double three;
+  Camera([this.three = 1.0]);
+
+  double get two => 1.0 - three;
 }

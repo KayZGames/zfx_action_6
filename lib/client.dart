@@ -34,22 +34,12 @@ class Game extends GameBase {
   }
 
   void createEntities() {
-    TagManager tm = world.getManager(TagManager);
-    GroupManager gm = world.getManager(GroupManager);
-
-    var e = addEntity(
-        [
-            new Circle(20.0),
-            new Position(400.0, 300.0, 0.0),
-            new Color(red: 1.0, green: 1.0, blue: 1.0),
-            new Heartbeat(),
-            new Health(100.0, 100.0)]);
-    tm.register(e, playerTag);
-    gm.add(e, circleGroup);
+    createInitialEntities(world);
   }
 
   List<EntitySystem> getSystems() {
     return [
+        new CameraSwitchingSystem(),
         new CircleDestructionSystem(),
         new PainAnalysingSystem(audioAnalyser),
 
@@ -115,4 +105,24 @@ class Game extends GameBase {
     querySelector('#reasonForAudio').style.display = 'none';
     eventBus.fire(new AnalyticsTrackEvent('audio', '${mediaStreamSource != null}'));
   }
+}
+
+
+void createInitialEntities(World world) {
+  TagManager tm = world.getManager(TagManager);
+  GroupManager gm = world.getManager(GroupManager);
+  var e = world.createAndAddEntity(
+      [
+          new Circle(20.0),
+          new Position(400.0, 300.0, 0.0),
+          new Color(red: 1.0, green: 1.0, blue: 1.0),
+          new Heartbeat(),
+          new Health(100.0, 100.0)]);
+  tm.register(e, playerTag);
+  gm.add(e, circleGroup);
+
+  e = world.createAndAddEntity([
+      new Camera()
+    ]);
+  tm.register(e, cameraTag);
 }

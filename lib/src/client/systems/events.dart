@@ -25,15 +25,7 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
           eventBus.fire(new AnalyticsTrackEvent('Rage Mode', ''), sync: false);
         } else if (tm.getEntity(playerTag) == null) {
           world.deleteAllEntities();
-          var e = world.createAndAddEntity(
-              [
-                  new Circle(20.0),
-                  new Position(400.0, 300.0, 0.0),
-                  new Color(red: 1.0, green: 1.0, blue: 1.0),
-                  new Heartbeat(),
-                  new Health(100.0, 100.0)]);
-          tm.register(e, playerTag);
-          gm.add(e, circleGroup);
+          createInitialEntities(world);
           gameState = new GameState();
           hss.updateHighscore();
           eventBus.fire(new AnalyticsTrackEvent('Restart Game', ''), sync: false);
@@ -54,4 +46,22 @@ class MouseInputHandlingSystem extends VoidEntitySystem {
 
   @override
   bool checkProcessing() => tm.getEntity(playerTag) != null;
+}
+
+class CameraSwitchingSystem extends VoidEntitySystem {
+  TagManager tm;
+  Mapper<Camera> cm;
+  RadioButtonInputElement input3d = querySelector('#threed');
+
+  @override
+  void processSystem() {
+    var cameraEntity = tm.getEntity(cameraTag);
+    var camera = cm[cameraEntity];
+    if (input3d.checked) {
+      var old = camera.three;
+      camera.three += (1.0 - old) * 0.0001;
+    } else {
+      camera.three *= 0.92;
+    }
+  }
 }

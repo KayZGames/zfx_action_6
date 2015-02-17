@@ -34,7 +34,7 @@ class BackgroundDotRenderingSystem extends WebGlRenderingSystem {
     buffer('aPointSize', sizes, 1);
     buffer('aColor', colors, 4);
 
-    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var modelMatrix = createViewProjectionMatrix(tm, world);
     var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
     gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
@@ -86,7 +86,7 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
     buffer('aPosition', positions, 3);
     buffer('aColor', colors, 4);
 
-    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var modelMatrix = createViewProjectionMatrix(tm, world);
     var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
     gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
@@ -187,7 +187,7 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
   void render(int length) {
     bufferElements([const Attrib('aPosition', 3), const Attrib('aColor', 4)], positionsAndColors, indices);
 
-    var modelMatrix = createViewProjectionMatrix(tagManager, pm);
+    var modelMatrix = createViewProjectionMatrix(tagManager, world);
     var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
     gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
@@ -275,7 +275,7 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
     buffer('aPosition', positions, 2);
     buffer('aColor', colors, 4);
 
-    var modelMatrix = createViewProjectionMatrix(tm, pm);
+    var modelMatrix = createViewProjectionMatrix(tm, world);
     var uViewProjectionMatrix = gl.getUniformLocation(program, 'uViewProjectionMatrix');
     gl.uniformMatrix4fv(uViewProjectionMatrix, false, modelMatrix.storage);
 
@@ -350,8 +350,13 @@ class PainometerRenderingSystem extends VoidWebGlRenderingSystem {
 }
 
 
-Matrix4 createViewProjectionMatrix(TagManager tm, Mapper<Position> pm) {
+Matrix4 createViewProjectionMatrix(TagManager tm, World world) {
+  var pm = new Mapper<Position>(Position, world);
+  var cm = new Mapper<Camera>(Camera, world);
+
   var player = tm.getEntity(playerTag);
+  var cameraEntity = tm.getEntity(cameraTag);
+  var camera = cm[cameraEntity];
   var angle = 0.0;
   if (null != player) {
     angle = PI / 8 * (pm[player].x / 400.0 - 1);
@@ -363,7 +368,10 @@ Matrix4 createViewProjectionMatrix(TagManager tm, Mapper<Position> pm) {
       new Vector3(400.0 + 100 * sin(angle), 550.0, -150.0),
       new Vector3(400.0, 200.0, 150.0),
       new Vector3(0.0, -1.0, 0.0));
-//  setOrthographicMatrix(projMatrix, 00, 800, 600, 0, 100, -100);
   setPerspectiveMatrix(projMatrix, PI / 2, 4 / 3, 1, 1000);
-  return projMatrix * viewMatrix;
+  var threedViewProjextionMatrix = projMatrix * viewMatrix;
+  var twodOrthographicMatrix = new Matrix4.identity();
+  setOrthographicMatrix(twodOrthographicMatrix, 00, 800, 600, 0, 100, -100);
+
+  return threedViewProjextionMatrix * camera.three + twodOrthographicMatrix * camera.two;
 }

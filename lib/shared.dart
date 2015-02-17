@@ -10,6 +10,7 @@ part 'src/shared/systems/logic.dart';
 part 'src/shared/systems/spawner.dart';
 
 const String playerTag = 'player';
+const String cameraTag = 'camera';
 const String circleGroup = 'circles';
 
 const int fftSize = 512;
