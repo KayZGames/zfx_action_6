@@ -93,7 +93,7 @@ class GameStateRenderingSystem extends VoidEntitySystem {
     var painometer = min(600, 600 * gameState.painometer / 100);
     var label = 'PAIN-O-METER';
     if (gameState.painometer >= 100.0) {
-      ctx.lineWidth = 1 + (1 + sin(world.time / 100)) * 2;
+      ctx.lineWidth = 1 + (1 + sin(time / 100)) * 2;
       ctx
           ..strokeStyle = '#8A0707'
           ..strokeRect(0, 0, 800, 600);

@@ -70,7 +70,6 @@ class ParticleRenderingSystem extends WebGlRenderingSystem {
   void processEntity(int index, Entity entity) {
     var p = pm[entity];
     var c = cm[entity];
-    var particle = particleMapper[entity];
 
     positions[index * 3] = p.x;
     positions[index * 3 + 1] = p.y;
@@ -126,7 +125,7 @@ class TriangleRenderingSystem extends WebGlRenderingSystem {
 
   @override
   void begin() {
-    var mod = sin(world.time / 0.14);
+    var mod = sin(time / 0.14);
     beatMod = 1 + (mod * mod * mod * mod) / 2;
   }
 
@@ -245,7 +244,7 @@ class CircleRenderingSystem extends WebGlRenderingSystem {
         blue = 7 / 255;
       }
     }
-    var heartbeatMod = world.time % beat;
+    var heartbeatMod = time % beat;
     var radius = circle.radius;
     if (heartbeatMod > 0.8 * beat) {
       radius = radius + (1000 * heartbeatMod / beat - 800) * mod;

@@ -4,14 +4,14 @@ dependencies:
   browser: any
   canvas_query: any
   dart_to_js_script_rewriter: any
-  dartemis:
-    path: ../dartemis
+  dartemis: any
+  dartemis_transformer: any
   gamedev_helpers:
     path: ../gamedev_helpers
   hop: any
   lawndart: any
 transformers:
 - dart_to_js_script_rewriter
-- dartemis:
+- dartemis_transformer:
     additionalLibraries:
     - gamedev_helpers/gamedev_helpers.dart

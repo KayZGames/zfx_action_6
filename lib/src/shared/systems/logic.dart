@@ -273,12 +273,11 @@ class ThrusterParticleEmittingSystem extends EntityProcessingSystem {
 
   @override
   void processEntity(Entity entity) {
-    var a = am[entity];
     var o = om[entity];
     var p = pm[entity];
     var t = tm[entity];
 
-    for (int i = 0; i < random.nextInt(5); i++) {
+    for (int i = 0; i < random.nextInt(10); i++) {
       var lifetime = 0.5 + 0.1 * random.nextDouble();
       var emitAngle = o.value - PI / 4 + random.nextDouble() * PI / 2;
       var zAngle = PI / 4 - random.nextDouble() * PI / 2;
@@ -400,8 +399,6 @@ class FriendMovementSystem extends EntitySystem {
       var diffX = playerPos.x - p.x;
       var diffY = playerPos.y - p.y;
       var angle = atan2(diffY, diffX);
-      var velocityAngle = atan2(v.y, v.x);
-      var velocity = sqrt(v.x * v.x + v.y * v.y);
 
       if (missingDistance <= 25) {
         a.value = 0.0;
