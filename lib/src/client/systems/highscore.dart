@@ -8,8 +8,8 @@ class HighScoreSystem extends VoidEntitySystem {
 
   @override
   void initialize() {
-    store = new Store('zfaxaction6', 'highscore');
-    store.open().then((_) {
+    Store.open('zfaxaction6', 'highscore').then((store) {
+      this.store = store;
       updateHighscore();
       updateScreamTime();
     });
