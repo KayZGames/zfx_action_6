@@ -8,7 +8,6 @@ dependencies:
   dartemis_transformer: any
   gamedev_helpers:
     path: ../gamedev_helpers
-  hop: any
   lawndart: any
 transformers:
 - dart_to_js_script_rewriter

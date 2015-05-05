@@ -389,7 +389,6 @@ class FriendMovementSystem extends EntitySystem {
       var c = cm[entity];
       var a = am[entity];
       var o = om[entity];
-      var v = vm[entity];
 
       var distance = playerPos.distanceTo(p);
       var neededDistance = playerCircle.radius + c.radius + 2;

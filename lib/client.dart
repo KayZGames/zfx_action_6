@@ -37,8 +37,23 @@ class Game extends GameBase {
     createInitialEntities(world);
   }
 
-  List<EntitySystem> getSystems() {
-    return [
+  Map<int, List<EntitySystem>> getSystems() {
+    return {0: [
+        new WebGlCanvasCleaningSystem(ctx),
+
+        new CanvasCleaningSystem(hudCanvas, fillStyle: 'rgba(0, 0, 0, 0)'),
+        new RageModeRenderer(hudCtx),
+        new ParticleRenderingSystem(ctx),
+        new TriangleRenderingSystem(ctx),
+        new CircleRenderingSystem(ctx),
+        new BackgroundDotRenderingSystem(ctx),
+        new MessageRenderingSystem(hudCtx),
+        new GameOverRenderingSystem(hudCtx),
+        new GameStateRenderingSystem(hudCtx),
+        new PainometerRenderingSystem(ctx),
+//        new FpsRenderingSystem(ctx),],
+        ],
+      1: [
         new CameraSwitchingSystem(),
         new CircleDestructionSystem(),
         new PainAnalysingSystem(audioAnalyser),
@@ -57,20 +72,6 @@ class Game extends GameBase {
 
         new TweeningSystem(),
 
-        new WebGlCanvasCleaningSystem(ctx),
-
-        new CanvasCleaningSystem(hudCanvas, fillStyle: 'rgba(0, 0, 0, 0)'),
-        new RageModeRenderer(hudCtx),
-        new ParticleRenderingSystem(ctx),
-        new TriangleRenderingSystem(ctx),
-        new CircleRenderingSystem(ctx),
-        new BackgroundDotRenderingSystem(ctx),
-        new MessageRenderingSystem(hudCtx),
-        new GameOverRenderingSystem(hudCtx),
-        new GameStateRenderingSystem(hudCtx),
-        new PainometerRenderingSystem(ctx),
-//        new FpsRenderingSystem(ctx),
-
         new TriangleSpawningSystem(),
         new BackgroundDotSpawner(),
         new FriendSpawner(),
@@ -81,7 +82,7 @@ class Game extends GameBase {
 
         new HighScoreSystem(),
 
-        new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')];
+        new AnalyticsSystem(AnalyticsSystem.GITHUB, 'zfx_action_6')]};
   }
 
   onInit() {
