@@ -5,6 +5,7 @@ class MessageRenderingSystem extends EntityProcessingSystem {
   Mapper<Message> mm;
   Mapper<Position> pm;
   Mapper<Circle> cm;
+  TagManager tm;
 
   CanvasRenderingContext2D ctx;
 
@@ -18,10 +19,14 @@ class MessageRenderingSystem extends EntityProcessingSystem {
 
     ctx.font = '${m.fontSize}px Verdana';
     var width = ctx.measureText(m.message).width;
+    var matrix4 = createViewProjectionMatrix(tm, world);
+    var pos = matrix4 * new Vector4(p.x, p.y, p.z, 1.0);
+    pos.x = (400.0 * pos.x/pos.w + 400.0);
+    pos.y = (-300.0 * pos.y/pos.w + 300.0);
     ctx
         ..fillStyle = 'white'
         ..globalAlpha = m.alpha
-        ..fillText(m.message, p.x - width / 2, p.y - c.radius - m.fontSize - 10);
+        ..fillText(m.message, pos.x - width / 2, pos.y - c.radius - m.fontSize - 10);
 
     if (m.alpha == 0.0) {
       entity
