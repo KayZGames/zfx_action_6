@@ -14,3 +14,4 @@ packages/
 pubspec.lock
 .pub/
 .idea/
+.packages
